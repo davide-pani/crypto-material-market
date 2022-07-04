@@ -1,2 +1,2 @@
 # Material3 Cryptocurrencies Market Tracker App
-A Material3 Cryptocurrencies Market Tracker App built with Jetpack Compose.
+Cryptocurrencies Market Tracker App 📈 built using Material Design 3 💎 and Jetpack Compose 🚀.
