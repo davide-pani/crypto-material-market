@@ -19,3 +19,4 @@ rootProject.name = "Crypto Material Market"
 include ':app'
 include ':presentation'
 include ':domain'
+include ':data'
