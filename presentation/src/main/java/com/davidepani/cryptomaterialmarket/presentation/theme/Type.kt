@@ -1,4 +1,4 @@
-package com.davidepani.cryptomaterialmarket.ui.theme
+package com.davidepani.cryptomaterialmarket.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
