@@ -44,6 +44,7 @@ private val StocksDarkColorScheme = darkColorScheme(
     tertiary = StocksDarkSelectedCard,
     onSurface = StocksDarkPrimaryText,
     onPrimaryContainer = StocksDarkPrimaryText,
+    primaryContainer = StocksDarkSelectedCard
 )
 
 @Composable

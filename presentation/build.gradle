@@ -70,7 +70,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_ktx_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation 'androidx.activity:activity-compose:1.5.0'
-    implementation "io.coil-kt:coil-compose:1.4.0"
+    implementation "io.coil-kt:coil-compose:2.1.0"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
