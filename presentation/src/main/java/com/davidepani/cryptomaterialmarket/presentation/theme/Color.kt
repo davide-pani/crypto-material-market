@@ -14,11 +14,11 @@ val PositiveTrend = Color(0xFF65C466)
 val NegativeTrend = Color(0xFFEB4E3D)
 
 // Stocks Dark Theme
-val StocksDarkBackground = Color(0xFF1E1E1E)
+val StocksDarkBackground = Color(0xFF191919)
 val StocksDarkPrimaryText = Color(0xFFEBEBEB)
 val StocksDarkSecondaryText = Color(0xFF808080)
 val StocksDarkTopAppBarCollapsed = Color(0xFF212121)
 val StocksDarkSelectedChip = Color(0xFF3B3B3D)
-val StocksDarkSelectedCard = Color(0xFF404043)
+val StocksDarkSelectedCard = Color(0xFF565656)
 val StocksDarkBackgroundTranslucent = Color(0xFF262626)
 
