@@ -25,6 +25,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
+import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkSecondaryText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +62,9 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                 when(it) {
                     is CoinsListState.Loading -> {
                         Box(
-                            modifier = Modifier.fillMaxSize().padding(innerPadding),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = StocksDarkSecondaryText)
@@ -100,7 +103,10 @@ private fun CoinItem(coinUiItem: CoinUiItem) {
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .wrapContentHeight(),
-        onClick = { Toast.makeText(context, "${coinUiItem.name} clicked", Toast.LENGTH_SHORT).show() }
+        onClick = { Toast.makeText(context, "${coinUiItem.name} clicked", Toast.LENGTH_SHORT).show() },
+        colors = CardDefaults.cardColors(
+            contentColor = StocksDarkPrimaryText
+        )
     ) {
 
         Row(
@@ -169,7 +175,9 @@ private fun CoinItem(coinUiItem: CoinUiItem) {
                         Text(
                             text = coinUiItem.priceChangePercentage7d,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp).align(Alignment.End),
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp, vertical = 1.dp)
+                                .align(Alignment.End),
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.End
                         )

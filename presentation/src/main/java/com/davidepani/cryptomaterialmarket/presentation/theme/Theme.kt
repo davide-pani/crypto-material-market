@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -34,12 +33,12 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val StocksDarkColorScheme = darkColorScheme(
-    background = Color.Black,
+    background = StocksDarkBackground,
     onBackground = StocksDarkPrimaryText,
-    surface = Color.Black,
-    surfaceVariant = StocksDarkBackgroundTranslucent,
+    surface = StocksDarkBackground,
+    surfaceVariant = StocksDarkSelectedChip,
     onSurfaceVariant = StocksDarkPrimaryText,
-    primary = Color.Black,
+    primary = StocksDarkBackground,
     secondary = StocksDarkBackground,
     tertiary = StocksDarkSelectedCard,
     onSurface = StocksDarkPrimaryText,
