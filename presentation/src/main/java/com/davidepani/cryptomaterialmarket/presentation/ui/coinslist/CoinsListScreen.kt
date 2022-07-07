@@ -5,26 +5,31 @@ import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
-import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
-import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
+import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkSecondaryText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinsListScreen() {
+fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
@@ -50,14 +55,32 @@ fun CoinsListScreen() {
         },
         content = { innerPadding ->
 
-            val list = (0..75).map { it.toString() }
+            val state = viewModel.uiState.observeAsState()
 
-            LazyColumn(
-                contentPadding = innerPadding,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(count = list.size) {
-                    CoinItem(it = it)
+            state.value?.let {
+                when(it) {
+                    is CoinsListState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(innerPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = StocksDarkSecondaryText)
+                        }
+                    }
+                    is CoinsListState.Error -> {}
+                    is CoinsListState.Success -> {
+
+                        LazyColumn(
+                            contentPadding = innerPadding,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(it.coinsList) { item ->
+                                CoinItem(coinUiItem = item)
+                            }
+                        }
+
+                    }
+
                 }
             }
 
@@ -70,26 +93,25 @@ fun CoinsListScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinItem(it: Int) {
+private fun CoinItem(coinUiItem: CoinUiItem) {
     val context = LocalContext.current
 
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .wrapContentHeight(),
-        onClick = { Toast.makeText(context, "$it clicked", Toast.LENGTH_SHORT).show() }
+        onClick = { Toast.makeText(context, "${coinUiItem.name} clicked", Toast.LENGTH_SHORT).show() }
     ) {
-        val trendColor: Color = if (it % 2 == 0) PositiveTrend else NegativeTrend
 
         Row(
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 16.dp)
+                .padding(16.dp)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = rememberAsyncImagePainter("https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579"),
+                    painter = rememberAsyncImagePainter(coinUiItem.imageUrl),
                     contentDescription = null,
                     Modifier.size(40.dp)
                 )
@@ -98,7 +120,7 @@ fun CoinItem(it: Int) {
                     .fillMaxHeight(),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Bitcoin", fontWeight = FontWeight.Medium)
+                    Text(text = coinUiItem.name, fontWeight = FontWeight.SemiBold)
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Card(
@@ -109,41 +131,53 @@ fun CoinItem(it: Int) {
                             )
                         ) {
                             Text(
-                                text = "$it",
+                                text = coinUiItem.marketCapRank,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 1.dp, bottom = 1.dp),
                                 fontWeight = FontWeight.Medium
                             )
                         }
                         Spacer(modifier = Modifier.size(4.dp))
-                        Text(text = "BTC", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(
+                            text = coinUiItem.symbol,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
 
                 }
             }
 
             Column(modifier = Modifier
-                .padding(horizontal = 8.dp)
+                .padding(start = 8.dp)
                 .fillMaxHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
             ) {
-                Text(text = "$19,176.24", fontWeight = FontWeight.Medium)
+                Text(text = coinUiItem.price, fontWeight = FontWeight.Medium)
 
-                Card(
-                    shape = MaterialTheme.shapes.extraSmall,
-                    colors = CardDefaults.cardColors(
-                        containerColor = trendColor,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(
-                        text = "+5.36%",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp, top = 1.dp, bottom = 1.dp),
-                        fontWeight = FontWeight.SemiBold
-                    )
+                if (!coinUiItem.priceChangePercentage7d.isNullOrBlank() && coinUiItem.trendColor != null ) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraSmall,
+                        colors = CardDefaults.cardColors(
+                            containerColor = coinUiItem.trendColor,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.sizeIn(minWidth = 64.dp)
+                    ) {
+                        Text(
+                            text = coinUiItem.priceChangePercentage7d,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp).align(Alignment.End),
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.End
+                        )
+                    }
+
                 }
+
+
             }
 
         }

@@ -1,7 +1,7 @@
 package com.davidepani.cryptomaterialmarket.presentation.mappers
 
 import com.davidepani.cryptomaterialmarket.domain.entities.Coin
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinUi
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.kotlinextensions.formatToCurrency
@@ -15,10 +15,10 @@ class UiMapper @Inject constructor(
     private val numberFormatter: NumberFormatter
 ) {
 
-    fun mapCoinUi(coin: Coin): CoinUi {
-        return CoinUi(
+    fun mapCoinUiItem(coin: Coin): CoinUiItem {
+        return CoinUiItem(
             name = coin.name,
-            symbol = coin.symbol,
+            symbol = coin.symbol.uppercase(),
             imageUrl = coin.image,
             price = coin.price.formatToCurrency(currencyFormatter),
             marketCapRank = coin.marketCapRank.toString(),
@@ -28,6 +28,10 @@ class UiMapper @Inject constructor(
             },
             sparkline7dData = coin.sparkline7dData
         )
+    }
+
+    fun mapCoinUiItemsList(coinsList: List<Coin>): List<CoinUiItem> {
+        return coinsList.map { mapCoinUiItem(it) }
     }
 
 }

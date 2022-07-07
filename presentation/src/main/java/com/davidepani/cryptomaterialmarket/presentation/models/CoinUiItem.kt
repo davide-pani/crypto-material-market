@@ -2,7 +2,7 @@ package com.davidepani.cryptomaterialmarket.presentation.models
 
 import androidx.compose.ui.graphics.Color
 
-data class CoinUi(
+data class CoinUiItem(
     val name: String,
     val symbol: String,
     val imageUrl: String,
