@@ -9,9 +9,13 @@ class DataMapper @Inject constructor() {
     fun mapCoin(coinResponse: CoinApiResponse): Coin {
         return Coin(
             name = coinResponse.name,
+            symbol = coinResponse.symbol,
             price = coinResponse.currentPrice,
             marketCap = coinResponse.marketCap,
-            image = coinResponse.image
+            image = coinResponse.image,
+            marketCapRank = coinResponse.marketCapRank,
+            priceChangePercentage7d = coinResponse.priceChangePercentage7dInCurrency,
+            sparkline7dData = coinResponse.sparklineIn7d?.price
         )
     }
 
