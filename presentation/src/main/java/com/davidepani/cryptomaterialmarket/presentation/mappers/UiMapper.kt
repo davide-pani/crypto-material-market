@@ -20,7 +20,7 @@ class UiMapper @Inject constructor(
             name = coin.name,
             symbol = coin.symbol.uppercase(),
             imageUrl = coin.image,
-            price = coin.price.formatToCurrency(currencyFormatter),
+            price = coin.price.formatToCurrency(currencyFormatter, customCurrencySymbol = "$"),
             marketCapRank = coin.marketCapRank.toString(),
             priceChangePercentage7d = coin.priceChangePercentage7d?.formatToPercentage(numberFormatter),
             trendColor = coin.priceChangePercentage7d?.let {
