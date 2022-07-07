@@ -62,7 +62,8 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
 
-    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "com.github.davide-pani:android-extensions:$android_extensions_version"
+    implementation "com.github.davide-pani:kotlin-extensions:$kotlin_extensions_version"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
