@@ -120,7 +120,7 @@ private fun CoinItem(coinUiItem: CoinUiItem) {
                     .fillMaxHeight(),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = coinUiItem.name, fontWeight = FontWeight.SemiBold)
+                    Text(text = coinUiItem.name, fontWeight = FontWeight.Medium)
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Card(
@@ -164,7 +164,7 @@ private fun CoinItem(coinUiItem: CoinUiItem) {
                             containerColor = coinUiItem.trendColor,
                             contentColor = Color.White
                         ),
-                        modifier = Modifier.sizeIn(minWidth = 64.dp)
+                        modifier = Modifier.sizeIn(minWidth = 72.dp)
                     ) {
                         Text(
                             text = coinUiItem.priceChangePercentage7d,
