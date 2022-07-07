@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface CoinGeckoApiService {
 
     @GET("/api/v3/coins/markets")
-    suspend fun getCoinsMarkets(@Query("vs_currency") currency: String = "usd", @Query("per_page") numCoinsPerPage: Int = 100, @Query("order") order: String = "market_cap_desc"): List<CoinApiResponse>
+    suspend fun getCoinsMarkets(@Query("vs_currency") currency: String = "usd", @Query("page") page: Int = 1, @Query("per_page") numCoinsPerPage: Int = 100, @Query("order") order: String = "market_cap_desc", @Query("sparkline") includeSparkline7dData: Boolean = false, @Query("price_change_percentage") priceChangePercentageIntervals: String = ""): List<CoinApiResponse>
 
 
     companion object {

@@ -5,6 +5,11 @@ import com.davidepani.cryptomaterialmarket.domain.entities.Result
 
 interface CoinsRepository {
 
-    suspend fun retrieveCoinsList(): Result<List<Coin>>
+    suspend fun retrieveCoinsList(
+        currency: String = "usd",
+        numCoinsPerPage: Int = 100,
+        page: Int = 1,
+        includeSparkline7dData: Boolean = false
+    ): Result<List<Coin>>
 
 }

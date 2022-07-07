@@ -12,12 +12,20 @@ class CoinGeckoCoinsRepository @Inject constructor(
     private val mapper: DataMapper
 ) : CoinsRepository {
 
-    override suspend fun retrieveCoinsList(): Result<List<Coin>> {
+    override suspend fun retrieveCoinsList(
+        currency: String,
+        numCoinsPerPage: Int,
+        page: Int,
+        includeSparkline7dData: Boolean
+    ): Result<List<Coin>> {
         return try {
             val coinsList = coinGeckoApiService.getCoinsMarkets(
-                currency = "usd",
-                numCoinsPerPage = 1,
-                order = "market_cap_desc"
+                currency = currency,
+                page = page,
+                numCoinsPerPage = numCoinsPerPage,
+                order = "market_cap_desc",
+                includeSparkline7dData = includeSparkline7dData,
+                priceChangePercentageIntervals = "7d"
             )
 
             Result.Success(mapper.mapCoinsList(coinsList))
