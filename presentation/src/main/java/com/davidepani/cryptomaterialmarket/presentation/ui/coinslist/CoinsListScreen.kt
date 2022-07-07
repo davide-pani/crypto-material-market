@@ -111,7 +111,7 @@ private fun CoinItem(coinUiItem: CoinUiItem) {
 
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
