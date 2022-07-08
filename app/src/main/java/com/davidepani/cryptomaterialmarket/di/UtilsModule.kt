@@ -18,7 +18,10 @@ object UtilsModule {
     @Provides
     @Singleton
     fun provideCurrencyFormatter(): CurrencyFormatter {
-        return LocalizedCurrencyFormatter()
+        return LocalizedCurrencyFormatter(
+            minimumFractionDigits = 2,
+            maximumFractionDigits = 6
+        )
     }
 
     @Provides
