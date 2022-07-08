@@ -64,7 +64,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                         is CoinsListStateItems.LoadMore -> LoadMoreItem(onLoadMoreClick = { viewModel.onLoadMoreButtonClick() })
                         is CoinsListStateItems.Loading -> LoadingItem(item = item)
                         is CoinsListStateItems.CoinUiItem -> CoinItem(coinUiItem = item)
-                        is CoinsListStateItems.Error -> {}
+                        is CoinsListStateItems.Error -> ErrorItem(item = item, onRetryClick = { viewModel.onRetryButtonClick() })
                     }
 
                 }
@@ -74,13 +74,41 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
 }
 
+
+@Composable
+private fun ErrorItem(
+    item: CoinsListStateItems.Error,
+    onRetryClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(32.dp)
+            .defaultMinSize(minHeight = 48.dp)
+            .wrapContentHeight()
+            .fillMaxWidth(),
+        verticalArrangement =Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Error", color = MaterialTheme.colorScheme.onBackground)
+        Text(text = item.message, color = MaterialTheme.colorScheme.onBackground)
+        OutlinedButton(
+            onClick = { onRetryClick.invoke() },
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = StocksDarkPrimaryText
+            )
+        ) {
+            Text(text = "Retry")
+        }
+    }
+}
+
 @Composable
 private fun LoadMoreItem(
     onLoadMoreClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(32.dp)
             .defaultMinSize(minHeight = 48.dp)
             .wrapContentHeight()
             .fillMaxWidth(),
@@ -98,14 +126,14 @@ private fun LoadMoreItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoadingItem(item: CoinsListStateItems.Loading) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(32.dp)
             .defaultMinSize(minHeight = 48.dp)
             .wrapContentHeight()
