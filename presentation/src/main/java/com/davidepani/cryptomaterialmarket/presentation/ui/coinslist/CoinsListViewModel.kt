@@ -1,13 +1,12 @@
 package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidepani.cryptomaterialmarket.domain.entities.Result
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,32 +17,58 @@ class CoinsListViewModel @Inject constructor(
     private val mapper: UiMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableLiveData<CoinsListState>()
-    val uiState: LiveData<CoinsListState> = _uiState
+    val itemsList = mutableStateListOf<CoinsListStateItems>()
+
+    var numLoadedPages: Int = 0
+    var pageSize: Int = 10
 
 
     init {
-        getCoin()
+        getNextPage()
     }
 
-    private fun getCoin() {
-        _uiState.value = CoinsListState.Loading
+    fun getNextPage() {
+
+        val numNextPage = numLoadedPages + 1
+
+
+        itemsList.add(
+            CoinsListStateItems.Loading(
+                startIndex = (numLoadedPages * pageSize) + 1,
+                endIndex = (numNextPage) * pageSize
+            )
+        )
 
         viewModelScope.launch {
-            val result = getCoinsListUseCase()
+            val result = getCoinsListUseCase(
+                currency = "usd",
+                numCoinsPerPage = pageSize,
+                page = numNextPage
+            )
 
-            _uiState.value = when(result) {
+            itemsList.removeLast() // Remove loading item
+
+            when(result) {
                 is Result.Success -> {
-                    val mappedList = mapper.mapCoinUiItemsList(result.value)
-                    CoinsListState.Success(mappedList)
+                    numLoadedPages++
+                    itemsList.addAll(mapper.mapCoinUiItemsList(result.value))
+                    itemsList.add(CoinsListStateItems.LoadMore)
                 }
-                is Result.Failure -> CoinsListState.Error(result.error.toString())
+                is Result.Failure -> itemsList.add(CoinsListStateItems.Error(result.error.toString()))
             }
+
         }
     }
 
+
     fun onRetryButtonClick() {
-        getCoin()
+        itemsList.removeLast()
+        getNextPage()
+    }
+
+    fun onLoadMoreButtonClick() {
+        itemsList.removeLast()
+        getNextPage()
     }
 
 }

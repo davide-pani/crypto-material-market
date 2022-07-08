@@ -1,7 +1,7 @@
 package com.davidepani.cryptomaterialmarket.presentation.mappers
 
 import com.davidepani.cryptomaterialmarket.domain.entities.Coin
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
 import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.kotlinextensions.formatToCurrency
@@ -15,14 +15,16 @@ class UiMapper @Inject constructor(
     private val numberFormatter: NumberFormatter
 ) {
 
-    fun mapCoinUiItem(coin: Coin): CoinUiItem {
-        return CoinUiItem(
+    fun mapCoinUiItem(coin: Coin): CoinsListStateItems.CoinUiItem {
+        return CoinsListStateItems.CoinUiItem(
             name = coin.name,
             symbol = coin.symbol.uppercase(),
             imageUrl = coin.image,
             price = coin.price.formatToCurrency(currencyFormatter, customCurrencySymbol = "$"),
             marketCapRank = coin.marketCapRank.toString(),
-            priceChangePercentage7d = coin.priceChangePercentage7d?.formatToPercentage(numberFormatter),
+            priceChangePercentage7d = coin.priceChangePercentage7d?.formatToPercentage(
+                numberFormatter
+            ),
             trendColor = coin.priceChangePercentage7d?.let {
                 if (it >= 0) PositiveTrend else NegativeTrend
             },
@@ -30,7 +32,7 @@ class UiMapper @Inject constructor(
         )
     }
 
-    fun mapCoinUiItemsList(coinsList: List<Coin>): List<CoinUiItem> {
+    fun mapCoinUiItemsList(coinsList: List<Coin>): List<CoinsListStateItems.CoinUiItem> {
         return coinsList.map { mapCoinUiItem(it) }
     }
 

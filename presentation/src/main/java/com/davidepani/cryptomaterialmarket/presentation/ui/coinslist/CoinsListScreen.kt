@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,11 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
-import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkSecondaryText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,39 +53,65 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
         },
         content = { innerPadding ->
 
-            val state = viewModel.uiState.observeAsState()
+            LazyColumn(
+                contentPadding = innerPadding,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
 
-            state.value?.let {
-                when(it) {
-                    is CoinsListState.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = StocksDarkSecondaryText)
-                        }
-                    }
-                    is CoinsListState.Error -> {}
-                    is CoinsListState.Success -> {
+                items(viewModel.itemsList) { item ->
 
-                        LazyColumn(
-                            contentPadding = innerPadding,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(it.coinsList) { item ->
-                                CoinItem(coinUiItem = item)
-                            }
-                        }
-
+                    when(item) {
+                        is CoinsListStateItems.LoadMore -> LoadMoreItem(onLoadMoreClick = { viewModel.onLoadMoreButtonClick() })
+                        is CoinsListStateItems.Loading -> LoadingItem(item = item)
+                        is CoinsListStateItems.CoinUiItem -> CoinItem(coinUiItem = item)
+                        is CoinsListStateItems.Error -> {}
                     }
 
                 }
             }
-
         }
     )
+
+}
+
+@Composable
+private fun LoadMoreItem(
+    onLoadMoreClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .defaultMinSize(minHeight = 48.dp)
+            .wrapContentHeight()
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedButton(
+            onClick = { onLoadMoreClick.invoke() },
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = StocksDarkPrimaryText
+            )
+        ) {
+            Text(text = "Load more coins")
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LoadingItem(item: CoinsListStateItems.Loading) {
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+            .padding(32.dp)
+            .defaultMinSize(minHeight = 48.dp)
+            .wrapContentHeight()
+    ) {
+        CircularProgressIndicator(color = StocksDarkPrimaryText)
+    }
 
 }
 
@@ -96,7 +119,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CoinItem(coinUiItem: CoinUiItem) {
+private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
     val context = LocalContext.current
 
     Card(
