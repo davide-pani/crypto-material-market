@@ -29,6 +29,8 @@ import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryT
 @Composable
 fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
+    val context = LocalContext.current
+
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         decayAnimationSpec,
@@ -63,7 +65,12 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                     when(item) {
                         is CoinsListStateItems.LoadMore -> LoadMoreItem(onLoadMoreClick = { viewModel.onLoadMoreButtonClick() })
                         is CoinsListStateItems.Loading -> LoadingItem(item = item)
-                        is CoinsListStateItems.CoinUiItem -> CoinItem(coinUiItem = item)
+                        is CoinsListStateItems.CoinUiItem -> {
+                            CoinItem(
+                                item = item,
+                                onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
+                            )
+                        }
                         is CoinsListStateItems.Error -> ErrorItem(item = item, onRetryClick = { viewModel.onRetryButtonClick() })
                     }
 
@@ -147,14 +154,16 @@ private fun LoadingItem(item: CoinsListStateItems.Loading) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
-    val context = LocalContext.current
+private fun CoinItem(
+    item: CoinsListStateItems.CoinUiItem,
+    onCoinItemClick: (CoinsListStateItems.CoinUiItem) -> Unit
+) {
 
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .wrapContentHeight(),
-        onClick = { Toast.makeText(context, "${coinUiItem.name} clicked", Toast.LENGTH_SHORT).show() },
+        onClick = { onCoinItemClick.invoke(item) },
         colors = CardDefaults.cardColors(
             contentColor = StocksDarkPrimaryText
         )
@@ -168,7 +177,7 @@ private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
         ) {
             Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = rememberAsyncImagePainter(coinUiItem.imageUrl),
+                    painter = rememberAsyncImagePainter(item.imageUrl),
                     contentDescription = null,
                     Modifier.size(40.dp)
                 )
@@ -177,7 +186,7 @@ private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
                     .fillMaxHeight(),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = coinUiItem.name, fontWeight = FontWeight.Medium)
+                    Text(text = item.name, fontWeight = FontWeight.Medium)
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Card(
@@ -188,7 +197,7 @@ private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
                             )
                         ) {
                             Text(
-                                text = coinUiItem.marketCapRank,
+                                text = item.marketCapRank,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 1.dp, bottom = 1.dp),
                                 fontWeight = FontWeight.Medium
@@ -196,7 +205,7 @@ private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
                         }
                         Spacer(modifier = Modifier.size(4.dp))
                         Text(
-                            text = coinUiItem.symbol,
+                            text = item.symbol,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontWeight = FontWeight.Medium
@@ -212,19 +221,19 @@ private fun CoinItem(coinUiItem: CoinsListStateItems.CoinUiItem) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
             ) {
-                Text(text = coinUiItem.price, fontWeight = FontWeight.Medium)
+                Text(text = item.price, fontWeight = FontWeight.Medium)
 
-                if (!coinUiItem.priceChangePercentage7d.isNullOrBlank() && coinUiItem.trendColor != null ) {
+                if (!item.priceChangePercentage7d.isNullOrBlank() && item.trendColor != null ) {
                     Card(
                         shape = MaterialTheme.shapes.extraSmall,
                         colors = CardDefaults.cardColors(
-                            containerColor = coinUiItem.trendColor,
+                            containerColor = item.trendColor,
                             contentColor = Color.White
                         ),
                         modifier = Modifier.sizeIn(minWidth = 72.dp)
                     ) {
                         Text(
-                            text = coinUiItem.priceChangePercentage7d,
+                            text = item.priceChangePercentage7d,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 1.dp)
