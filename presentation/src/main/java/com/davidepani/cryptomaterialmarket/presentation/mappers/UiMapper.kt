@@ -2,6 +2,7 @@ package com.davidepani.cryptomaterialmarket.presentation.mappers
 
 import com.davidepani.cryptomaterialmarket.domain.entities.Coin
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
+import com.davidepani.cryptomaterialmarket.presentation.models.DataPoint
 import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.kotlinextensions.formatToCurrency
@@ -28,7 +29,11 @@ class UiMapper @Inject constructor(
             trendColor = coin.priceChangePercentage7d?.let {
                 if (it >= 0) PositiveTrend else NegativeTrend
             },
-            sparkline7dData = coin.sparkline7dData
+            sparkline7dData = coin.sparkline7dData?.mapIndexed { index, d ->
+                if (index % 3 == 0) {
+                    DataPoint(x = index.toDouble(), y = d, label = null)
+                } else null
+            }?.filterNotNull()
         )
     }
 

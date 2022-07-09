@@ -17,10 +17,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
@@ -89,7 +91,7 @@ private fun ErrorItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(32.dp)
+            .padding(bottom = 8.dp)
             .defaultMinSize(minHeight = 48.dp)
             .wrapContentHeight()
             .fillMaxWidth(),
@@ -115,8 +117,7 @@ private fun LoadMoreItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(32.dp)
-            .defaultMinSize(minHeight = 48.dp)
+            .padding(bottom = 8.dp)
             .wrapContentHeight()
             .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
@@ -141,8 +142,7 @@ private fun LoadingItem(item: CoinsListStateItems.Loading) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(32.dp)
-            .defaultMinSize(minHeight = 48.dp)
+            .padding(bottom = 8.dp)
             .wrapContentHeight()
     ) {
         CircularProgressIndicator(color = StocksDarkPrimaryText)
@@ -173,7 +173,8 @@ private fun CoinItem(
             modifier = Modifier
                 .padding(12.dp)
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
                 Image(
@@ -183,10 +184,16 @@ private fun CoinItem(
                 )
                 Column(modifier = Modifier
                     .padding(horizontal = 8.dp)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .wrapContentWidth(),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = item.name, fontWeight = FontWeight.Medium)
+                    Text(
+                        text = item.name,
+                        fontWeight = FontWeight.Medium,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Card(
@@ -208,11 +215,21 @@ private fun CoinItem(
                             text = item.symbol,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
                 }
+            }
+
+            if (!item.sparkline7dData.isNullOrEmpty() && item.trendColor != null) {
+                LineChart(
+                    modifier = Modifier.size(width = 60.dp, height = 40.dp),
+                    data = item.sparkline7dData,
+                    graphColor = item.trendColor
+                )
             }
 
             Column(modifier = Modifier
@@ -221,7 +238,7 @@ private fun CoinItem(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
             ) {
-                Text(text = item.price, fontWeight = FontWeight.Medium)
+                Text(text = item.price, fontWeight = FontWeight.Medium, maxLines = 1)
 
                 if (!item.priceChangePercentage7d.isNullOrBlank() && item.trendColor != null ) {
                     Card(
@@ -239,7 +256,8 @@ private fun CoinItem(
                                 .padding(horizontal = 8.dp, vertical = 1.dp)
                                 .align(Alignment.End),
                             fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.End
+                            textAlign = TextAlign.End,
+                            maxLines = 1
                         )
                     }
 

@@ -14,6 +14,6 @@ sealed class CoinsListStateItems {
         val marketCapRank: String,
         val priceChangePercentage7d: String?,
         val trendColor: Color?,
-        val sparkline7dData: List<Double>?
+        val sparkline7dData: List<DataPoint>?
     ) : CoinsListStateItems()
 }
