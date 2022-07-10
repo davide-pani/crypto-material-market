@@ -242,7 +242,7 @@ private fun CoinItem(
             if (!item.sparkline7dData.isNullOrEmpty() && item.trendColor != null) {
                 // Invisible text with max price size to determine the max possible size of this column
                 Text(
-                    text = "BTC0.777777",
+                    text = "$100,000.00",
                     modifier = Modifier.constrainAs(maxWidthInvisiblePriceText) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
