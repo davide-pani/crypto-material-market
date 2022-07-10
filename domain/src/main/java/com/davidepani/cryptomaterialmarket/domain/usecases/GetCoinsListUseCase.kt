@@ -1,8 +1,8 @@
 package com.davidepani.cryptomaterialmarket.domain.usecases
 
-import com.davidepani.cryptomaterialmarket.domain.entities.Coin
-import com.davidepani.cryptomaterialmarket.domain.entities.Result
 import com.davidepani.cryptomaterialmarket.domain.interfaces.CoinsRepository
+import com.davidepani.cryptomaterialmarket.domain.models.Coin
+import com.davidepani.cryptomaterialmarket.domain.models.Result
 import javax.inject.Inject
 
 

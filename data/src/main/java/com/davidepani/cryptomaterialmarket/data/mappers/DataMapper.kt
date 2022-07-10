@@ -1,7 +1,7 @@
 package com.davidepani.cryptomaterialmarket.data.mappers
 
 import com.davidepani.cryptomaterialmarket.data.models.CoinApiResponse
-import com.davidepani.cryptomaterialmarket.domain.entities.Coin
+import com.davidepani.cryptomaterialmarket.domain.models.Coin
 import javax.inject.Inject
 
 class DataMapper @Inject constructor() {

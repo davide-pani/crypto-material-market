@@ -1,6 +1,6 @@
 package com.davidepani.cryptomaterialmarket.presentation.mappers
 
-import com.davidepani.cryptomaterialmarket.domain.entities.Coin
+import com.davidepani.cryptomaterialmarket.domain.models.Coin
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
 import com.davidepani.cryptomaterialmarket.presentation.models.DataPoint
 import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend

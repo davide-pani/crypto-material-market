@@ -1,7 +1,7 @@
 package com.davidepani.cryptomaterialmarket.domain.interfaces
 
-import com.davidepani.cryptomaterialmarket.domain.entities.Coin
-import com.davidepani.cryptomaterialmarket.domain.entities.Result
+import com.davidepani.cryptomaterialmarket.domain.models.Coin
+import com.davidepani.cryptomaterialmarket.domain.models.Result
 
 interface CoinsRepository {
 

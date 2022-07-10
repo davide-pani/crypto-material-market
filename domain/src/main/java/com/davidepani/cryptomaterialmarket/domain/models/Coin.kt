@@ -1,4 +1,4 @@
-package com.davidepani.cryptomaterialmarket.domain.entities
+package com.davidepani.cryptomaterialmarket.domain.models
 
 data class Coin(
     val name: String,

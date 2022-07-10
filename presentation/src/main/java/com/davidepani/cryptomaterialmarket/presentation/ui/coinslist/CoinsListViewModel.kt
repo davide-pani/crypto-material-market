@@ -3,7 +3,7 @@ package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidepani.cryptomaterialmarket.domain.entities.Result
+import com.davidepani.cryptomaterialmarket.domain.models.Result
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems

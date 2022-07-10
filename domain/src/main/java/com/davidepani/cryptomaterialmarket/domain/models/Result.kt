@@ -1,4 +1,4 @@
-package com.davidepani.cryptomaterialmarket.domain.entities
+package com.davidepani.cryptomaterialmarket.domain.models
 
 sealed class Result<out T : Any> {
     data class Success<out T : Any>(val value: T) : Result<T>()
