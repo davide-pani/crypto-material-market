@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,6 +26,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
@@ -65,6 +67,10 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
+                item {
+                    PoweredByCoinGeckoItem()
+                }
+
                 items(viewModel.itemsList) { item ->
 
                     when(item) {
@@ -81,11 +87,34 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
                 }
             }
+
         }
     )
 
 }
 
+
+@Composable
+private fun PoweredByCoinGeckoItem() {
+
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Powered by ",
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodySmall
+        )
+        Image(
+            modifier = Modifier
+                .requiredHeight(20.dp).padding(top = 2.dp),
+            painter = painterResource(id = R.drawable.ic_coingecko),
+            contentDescription = null,
+        )
+    }
+
+}
 
 @Composable
 private fun ErrorItem(
@@ -243,11 +272,13 @@ private fun CoinItem(
                 // Invisible text with max price size to determine the max possible size of this column
                 Text(
                     text = "$100,000.00",
-                    modifier = Modifier.constrainAs(maxWidthInvisiblePriceText) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        end.linkTo(parent.end)
-                    }.alpha(0f)
+                    modifier = Modifier
+                        .constrainAs(maxWidthInvisiblePriceText) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            end.linkTo(parent.end)
+                        }
+                        .alpha(0f)
                 )
 
                 LineChart(
@@ -264,11 +295,13 @@ private fun CoinItem(
             }
 
             Column(
-                modifier = Modifier.constrainAs(priceColumn) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                }.wrapContentSize(),
+                modifier = Modifier
+                    .constrainAs(priceColumn) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
+                    .wrapContentSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
             ) {
