@@ -28,7 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
 
@@ -73,19 +74,21 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
                 items(viewModel.itemsList) { item ->
 
-                    when(item) {
-                        is CoinsListStateItems.LoadMore -> LoadMoreItem(onLoadMoreClick = { viewModel.onLoadMoreButtonClick() })
-                        is CoinsListStateItems.Loading -> LoadingItem(item = item)
-                        is CoinsListStateItems.CoinUiItem -> {
-                            CoinItem(
-                                item = item,
-                                onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
-                            )
-                        }
-                        is CoinsListStateItems.Error -> ErrorItem(item = item, onRetryClick = { viewModel.onRetryButtonClick() })
-                    }
+                    CoinItem(
+                        item = item,
+                        onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
+                    )
 
                 }
+
+                item {
+                    when(val item = viewModel.stateItem.value) {
+                        is CoinsListState.LoadMore -> LoadMoreItem(onLoadMoreClick = { viewModel.onLoadMoreButtonClick() })
+                        is CoinsListState.Loading -> LoadingItem(item = item)
+                        is CoinsListState.Error -> ErrorItem(item = item, onRetryClick = { viewModel.onRetryButtonClick() })
+                    }
+                }
+
             }
 
         }
@@ -108,7 +111,8 @@ private fun PoweredByCoinGeckoItem() {
         )
         Image(
             modifier = Modifier
-                .requiredHeight(20.dp).padding(top = 2.dp),
+                .requiredHeight(20.dp)
+                .padding(top = 2.dp),
             painter = painterResource(id = R.drawable.ic_coingecko),
             contentDescription = null,
         )
@@ -118,7 +122,7 @@ private fun PoweredByCoinGeckoItem() {
 
 @Composable
 private fun ErrorItem(
-    item: CoinsListStateItems.Error,
+    item: CoinsListState.Error,
     onRetryClick: () -> Unit
 ) {
     Column(
@@ -167,17 +171,22 @@ private fun LoadMoreItem(
 }
 
 @Composable
-private fun LoadingItem(item: CoinsListStateItems.Loading) {
+private fun LoadingItem(item: CoinsListState.Loading) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
             .wrapContentHeight()
     ) {
         CircularProgressIndicator(color = StocksDarkPrimaryText)
+        Text(
+            text = "Loading coins...",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 
 }
@@ -187,8 +196,8 @@ private fun LoadingItem(item: CoinsListStateItems.Loading) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CoinItem(
-    item: CoinsListStateItems.CoinUiItem,
-    onCoinItemClick: (CoinsListStateItems.CoinUiItem) -> Unit
+    item: CoinUiItem,
+    onCoinItemClick: (CoinUiItem) -> Unit
 ) {
 
     Card(

@@ -1,12 +1,14 @@
 package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidepani.cryptomaterialmarket.domain.models.Result
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListStateItems
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +19,8 @@ class CoinsListViewModel @Inject constructor(
     private val mapper: UiMapper
 ) : ViewModel() {
 
-    val itemsList = mutableStateListOf<CoinsListStateItems>()
+    val itemsList = mutableStateListOf<CoinUiItem>()
+    val stateItem = mutableStateOf<CoinsListState>(CoinsListState.LoadMore)
 
     var numLoadedPages: Int = 0
     var pageSize: Int = 10
@@ -31,12 +34,9 @@ class CoinsListViewModel @Inject constructor(
 
         val numNextPage = numLoadedPages + 1
 
-
-        itemsList.add(
-            CoinsListStateItems.Loading(
-                startIndex = (numLoadedPages * pageSize) + 1,
-                endIndex = (numNextPage) * pageSize
-            )
+        stateItem.value = CoinsListState.Loading(
+            startIndex = (numLoadedPages * pageSize) + 1,
+            endIndex = (numNextPage) * pageSize
         )
 
         viewModelScope.launch {
@@ -46,15 +46,13 @@ class CoinsListViewModel @Inject constructor(
                 page = numNextPage
             )
 
-            itemsList.removeLast() // Remove loading item
-
             when(result) {
                 is Result.Success -> {
                     numLoadedPages++
                     itemsList.addAll(mapper.mapCoinUiItemsList(result.value))
-                    itemsList.add(CoinsListStateItems.LoadMore)
+                    stateItem.value = CoinsListState.LoadMore
                 }
-                is Result.Failure -> itemsList.add(CoinsListStateItems.Error(result.error.toString()))
+                is Result.Failure -> stateItem.value = CoinsListState.Error(result.error.toString())
             }
 
         }
@@ -62,12 +60,10 @@ class CoinsListViewModel @Inject constructor(
 
 
     fun onRetryButtonClick() {
-        itemsList.removeLast()
         getNextPage()
     }
 
     fun onLoadMoreButtonClick() {
-        itemsList.removeLast()
         getNextPage()
     }
 
