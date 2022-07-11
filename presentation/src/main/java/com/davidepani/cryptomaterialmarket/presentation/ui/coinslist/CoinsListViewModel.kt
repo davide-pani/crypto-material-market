@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.Result
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
@@ -41,7 +42,7 @@ class CoinsListViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = getCoinsListUseCase(
-                currency = "usd",
+                currency = Currency.USD,
                 numCoinsPerPage = pageSize,
                 page = numNextPage
             )

@@ -4,6 +4,8 @@ import com.davidepani.cryptomaterialmarket.data.api.CoinGeckoApiService
 import com.davidepani.cryptomaterialmarket.data.mappers.DataMapper
 import com.davidepani.cryptomaterialmarket.domain.interfaces.CoinsRepository
 import com.davidepani.cryptomaterialmarket.domain.models.Coin
+import com.davidepani.cryptomaterialmarket.domain.models.Currency
+import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.domain.models.Result
 import javax.inject.Inject
 
@@ -13,18 +15,19 @@ class CoinGeckoCoinsRepository @Inject constructor(
 ) : CoinsRepository {
 
     override suspend fun retrieveCoinsList(
-        currency: String,
+        currency: Currency,
         numCoinsPerPage: Int,
         page: Int,
-        includeSparkline7dData: Boolean
+        ordering: Ordering,
+        includeSparklineData: Boolean
     ): Result<List<Coin>> {
         return try {
             val coinsList = coinGeckoApiService.getCoinsMarkets(
-                currency = currency,
+                currency = mapper.mapCurrencyToCoinGeckoApiValue(currency),
                 page = page,
                 numCoinsPerPage = numCoinsPerPage,
-                order = "market_cap_desc",
-                includeSparkline7dData = includeSparkline7dData,
+                order = mapper.mapOrderingToCoinGeckoApiValue(ordering),
+                includeSparkline7dData = includeSparklineData,
                 priceChangePercentageIntervals = "7d"
             )
 
