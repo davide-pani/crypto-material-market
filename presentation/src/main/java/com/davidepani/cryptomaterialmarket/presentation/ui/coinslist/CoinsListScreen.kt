@@ -231,7 +231,6 @@ private fun CoinItem(
                         start.linkTo(parent.start)
                     },
                 contentDescription = null,
-                alignment = Alignment.Center,
                 filterQuality = FilterQuality.None
             )
 
