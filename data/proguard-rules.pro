@@ -20,4 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.davidepani.cryptomaterialmarket.data.models.*
+-keep class com.davidepani.cryptomaterialmarket.data.models.** { *; }
+
+-keepclassmembers,allowobfuscation class * {
+@com.google.gson.annotations.SerializedName <fields>;
+}
