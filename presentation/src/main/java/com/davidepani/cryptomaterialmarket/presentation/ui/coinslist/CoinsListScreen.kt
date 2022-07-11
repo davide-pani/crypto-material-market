@@ -220,17 +220,19 @@ private fun CoinItem(
 
             val (iconImage, nameColumn, chart, priceColumn, maxWidthInvisiblePriceText) = createRefs()
 
-            Image(
+            AsyncImage(
+                model = item.imageUrl,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(35.dp)
+                    .clip(shape = MaterialTheme.shapes.medium)
                     .constrainAs(iconImage) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                     },
-                painter = rememberAsyncImagePainter(item.imageUrl),
                 contentDescription = null,
-                alignment = Alignment.Center
+                alignment = Alignment.Center,
+                filterQuality = FilterQuality.None
             )
 
             Column(
