@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
@@ -212,7 +214,7 @@ private fun CoinItem(
 
         ConstraintLayout(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(8.dp)
                 .fillMaxSize()
         ) {
 
@@ -297,7 +299,7 @@ private fun CoinItem(
                             bottom.linkTo(parent.bottom)
                             end.linkTo(maxWidthInvisiblePriceText.start, margin = 4.dp)
                         }
-                        .size(width = 60.dp, height = 40.dp),
+                        .size(width = 50.dp, height = 30.dp),
                     data = item.sparkline7dData,
                     graphColor = item.trendColor
                 )
