@@ -74,7 +74,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                     PoweredByCoinGeckoItem()
                 }
 
-                items(viewModel.itemsList) { item ->
+                items(viewModel.itemsList, key = { it.symbol }) { item ->
 
                     CoinItem(
                         item = item,
