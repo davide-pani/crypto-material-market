@@ -3,6 +3,7 @@ package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 import android.widget.Toast
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,6 +29,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
@@ -71,7 +73,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
             ) {
 
                 item {
-                    PoweredByCoinGeckoItem()
+                    PoweredByCoinGeckoItem { viewModel.sortCoinsList(Ordering.PriceAsc) }
                 }
 
                 items(viewModel.itemsList, key = { it.symbol }) { item ->
@@ -100,10 +102,10 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
 
 @Composable
-private fun PoweredByCoinGeckoItem() {
+private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
 
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).clickable { onClick.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -281,7 +283,7 @@ private fun CoinItem(
 
             }
 
-            if (!item.sparkline7dData.isNullOrEmpty() && item.trendColor != null) {
+            if (!item.sparklineData.isNullOrEmpty() && item.trendColor != null) {
                 // Invisible text with max price size to determine the max possible size of this column
                 Text(
                     text = "$100,000.00",
@@ -302,7 +304,7 @@ private fun CoinItem(
                             end.linkTo(maxWidthInvisiblePriceText.start, margin = 4.dp)
                         }
                         .size(width = 50.dp, height = 30.dp),
-                    data = item.sparkline7dData,
+                    data = item.sparklineData,
                     graphColor = item.trendColor
                 )
             }
@@ -325,7 +327,7 @@ private fun CoinItem(
                     maxLines = 1
                 )
 
-                if (!item.priceChangePercentage7d.isNullOrBlank() && item.trendColor != null ) {
+                if (!item.priceChangePercentage.isNullOrBlank() && item.trendColor != null ) {
                     Card(
                         modifier = Modifier.sizeIn(minWidth = 72.dp),
                         shape = MaterialTheme.shapes.small,
@@ -335,7 +337,7 @@ private fun CoinItem(
                         )
                     ) {
                         Text(
-                            text = item.priceChangePercentage7d,
+                            text = item.priceChangePercentage,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 1.dp)

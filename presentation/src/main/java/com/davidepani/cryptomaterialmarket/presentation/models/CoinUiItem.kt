@@ -1,6 +1,7 @@
 package com.davidepani.cryptomaterialmarket.presentation.models
 
 import androidx.compose.ui.graphics.Color
+import com.davidepani.cryptomaterialmarket.domain.models.Coin
 
 data class CoinUiItem(
     val name: String,
@@ -8,7 +9,8 @@ data class CoinUiItem(
     val imageUrl: String,
     val price: String,
     val marketCapRank: String,
-    val priceChangePercentage7d: String?,
+    val priceChangePercentage: String?,
     val trendColor: Color?,
-    val sparkline7dData: List<DataPoint>?
+    val sparklineData: List<DataPoint>?,
+    val businessModelReference: Coin
 )

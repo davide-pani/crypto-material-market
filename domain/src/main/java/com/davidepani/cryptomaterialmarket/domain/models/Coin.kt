@@ -7,6 +7,6 @@ data class Coin(
     val marketCap: Long,
     val marketCapRank: Int,
     val image: String,
-    val priceChangePercentage7d: Double?,
-    val sparkline7dData: List<Double>?
+    val priceChangePercentage: Double?,
+    val sparklineData: List<Double>?
 )

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
+import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.domain.models.Result
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
@@ -66,6 +67,19 @@ class CoinsListViewModel @Inject constructor(
 
     fun onLoadMoreButtonClick() {
         getNextPage()
+    }
+
+    fun sortCoinsList(ordering: Ordering) {
+        when(ordering) {
+            Ordering.MarketCapAsc -> itemsList.sortBy { it.businessModelReference.marketCap }
+            Ordering.MarketCapDesc -> itemsList.sortByDescending { it.businessModelReference.marketCap }
+            Ordering.PriceAsc -> itemsList.sortBy { it.businessModelReference.price }
+            Ordering.PriceDesc -> itemsList.sortByDescending { it.businessModelReference.price }
+            Ordering.PriceChangeAsc -> itemsList.sortBy { it.businessModelReference.priceChangePercentage }
+            Ordering.PriceChangeDesc -> itemsList.sortByDescending { it.businessModelReference.priceChangePercentage }
+            Ordering.NameAsc -> itemsList.sortBy { it.name }
+            Ordering.NameDesc -> itemsList.sortByDescending { it.name }
+        }
     }
 
 }

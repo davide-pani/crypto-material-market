@@ -23,17 +23,18 @@ class UiMapper @Inject constructor(
             imageUrl = coin.image,
             price = coin.price.formatToCurrency(currencyFormatter, customCurrencySymbol = "$"),
             marketCapRank = coin.marketCapRank.toString(),
-            priceChangePercentage7d = coin.priceChangePercentage7d?.formatToPercentage(
+            priceChangePercentage = coin.priceChangePercentage?.formatToPercentage(
                 numberFormatter
             ),
-            trendColor = coin.priceChangePercentage7d?.let {
+            trendColor = coin.priceChangePercentage?.let {
                 if (it >= 0) PositiveTrend else NegativeTrend
             },
-            sparkline7dData = coin.sparkline7dData?.mapIndexed { index, d ->
+            sparklineData = coin.sparklineData?.mapIndexed { index, d ->
                 if (index % 3 == 0) {
                     DataPoint(x = index.toDouble(), y = d, label = null)
                 } else null
-            }?.filterNotNull()
+            }?.filterNotNull(),
+            businessModelReference = coin
         )
     }
 
