@@ -209,7 +209,8 @@ private fun CoinItem(
         onClick = { onCoinItemClick.invoke(item) },
         colors = CardDefaults.cardColors(
             contentColor = StocksDarkPrimaryText
-        )
+        ),
+        shape = MaterialTheme.shapes.medium
     ) {
 
         ConstraintLayout(
@@ -327,7 +328,7 @@ private fun CoinItem(
                 if (!item.priceChangePercentage7d.isNullOrBlank() && item.trendColor != null ) {
                     Card(
                         modifier = Modifier.sizeIn(minWidth = 72.dp),
-                        shape = MaterialTheme.shapes.extraSmall,
+                        shape = MaterialTheme.shapes.small,
                         colors = CardDefaults.cardColors(
                             containerColor = item.trendColor,
                             contentColor = Color.White
