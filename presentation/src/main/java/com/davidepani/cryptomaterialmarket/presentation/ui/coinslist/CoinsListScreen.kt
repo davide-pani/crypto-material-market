@@ -105,7 +105,9 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
 
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).clickable { onClick.invoke() },
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable { onClick.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -131,19 +133,17 @@ private fun ErrorItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(bottom = 8.dp)
-            .defaultMinSize(minHeight = 48.dp)
+            .padding(16.dp)
             .wrapContentHeight()
             .fillMaxWidth(),
         verticalArrangement =Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Error", color = MaterialTheme.colorScheme.onBackground)
-        Text(text = item.message, color = MaterialTheme.colorScheme.onBackground)
+        Text(text = item.message, color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
         OutlinedButton(
             onClick = { onRetryClick.invoke() },
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = StocksDarkPrimaryText
+                contentColor = MaterialTheme.colorScheme.onBackground
             )
         ) {
             Text(text = "Retry")

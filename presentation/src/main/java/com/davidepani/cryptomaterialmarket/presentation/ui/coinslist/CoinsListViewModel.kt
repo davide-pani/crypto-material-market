@@ -54,7 +54,7 @@ class CoinsListViewModel @Inject constructor(
                     itemsList.addAll(mapper.mapCoinUiItemsList(result.value))
                     stateItem.value = CoinsListState.LoadMore
                 }
-                is Result.Failure -> stateItem.value = CoinsListState.Error(result.error.toString())
+                is Result.Failure -> stateItem.value = CoinsListState.Error(mapper.mapErrorToUiMessage(result.error))
             }
 
         }

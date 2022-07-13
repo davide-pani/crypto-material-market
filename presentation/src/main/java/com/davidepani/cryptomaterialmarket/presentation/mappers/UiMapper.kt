@@ -9,6 +9,8 @@ import com.davidepani.kotlinextensions.formatToCurrency
 import com.davidepani.kotlinextensions.formatToPercentage
 import com.davidepani.kotlinextensions.utils.currencyformatter.CurrencyFormatter
 import com.davidepani.kotlinextensions.utils.numberformatter.NumberFormatter
+import java.net.ConnectException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class UiMapper @Inject constructor(
@@ -40,6 +42,17 @@ class UiMapper @Inject constructor(
 
     fun mapCoinUiItemsList(coinsList: List<Coin>): List<CoinUiItem> {
         return coinsList.map { mapCoinUiItem(it) }
+    }
+
+    fun mapErrorToUiMessage(error: Throwable): String {
+        return when(error) {
+            is UnknownHostException,
+            is ConnectException -> {
+                "You appear to be offline. \n" +
+                "Please, check your internet connection and retry."
+            }
+            else -> error.toString()
+        }
     }
 
 }
