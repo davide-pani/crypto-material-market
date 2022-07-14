@@ -84,9 +84,9 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
             items(coinItems, key = { it.marketCapRank }) { item ->
 
-                if (item != null) {
+                item?.let {
                     CoinItem(
-                        item = item,
+                        item = it,
                         onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
                     )
                 }
