@@ -66,6 +66,8 @@ dependencies {
     implementation "com.github.davide-pani:android-extensions:$android_extensions_version"
     implementation "com.github.davide-pani:kotlin-extensions:$kotlin_extensions_version"
 
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
     // Hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_version"

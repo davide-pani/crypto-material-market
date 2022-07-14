@@ -23,6 +23,8 @@ buildscript {
         strikt_version = "0.34.1"
         retrofit_version = "2.9.0"
         paging_version = "3.1.1"
+        timber_version = "5.0.1"
+        coroutines_version = "1.6.4"
     }
 
     dependencies {
@@ -34,6 +36,7 @@ plugins {
     id 'com.android.application' version '7.2.1' apply false
     id 'com.android.library' version '7.2.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.7.0' apply false
+    id "org.jetbrains.kotlin.jvm" version "1.7.0" apply false
 }
 
 task clean(type: Delete) {
