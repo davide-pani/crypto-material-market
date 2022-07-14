@@ -52,7 +52,8 @@ class CoinGeckoCoinsRepository @Inject constructor(
             PagingConfig(
                 pageSize = pageSize,
                 initialLoadSize = initialPageSize,
-                prefetchDistance = prefetchDistance
+                prefetchDistance = prefetchDistance,
+                enablePlaceholders = false
             )
         ) {
             CoinGeckoCoinsPagingSource(
