@@ -1,6 +1,9 @@
 package com.davidepani.cryptomaterialmarket.presentation.mappers
 
+import android.os.Build
 import com.davidepani.cryptomaterialmarket.domain.models.Coin
+import com.davidepani.cryptomaterialmarket.domain.models.Currency
+import com.davidepani.cryptomaterialmarket.domain.models.SettingsConfiguration
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.DataPoint
 import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 class UiMapper @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
-    private val numberFormatter: NumberFormatter
+    private val numberFormatter: NumberFormatter,
+    private val settingsConfiguration: SettingsConfiguration
 ) {
 
     fun mapCoinUiItem(coin: Coin): CoinUiItem {
@@ -23,7 +27,14 @@ class UiMapper @Inject constructor(
             name = coin.name,
             symbol = coin.symbol.uppercase(),
             imageUrl = coin.image,
-            price = coin.price.formatToCurrency(currencyFormatter, customCurrencySymbol = "$"),
+            price = coin.price.formatToCurrency(
+                currencyFormatter,
+                customCurrencySymbol = when(settingsConfiguration.getCurrency()) {
+                    Currency.USD -> "$"
+                    Currency.EUR -> "€"
+                    Currency.BTC -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) "₿" else "B"
+                }
+            ),
             marketCapRank = coin.marketCapRank.toString(),
             priceChangePercentage = coin.priceChangePercentage?.formatToPercentage(
                 numberFormatter

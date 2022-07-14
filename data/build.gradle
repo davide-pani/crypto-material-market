@@ -43,6 +43,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_version"
 
+    implementation "androidx.paging:paging-common:$paging_version"
+
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 

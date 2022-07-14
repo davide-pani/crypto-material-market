@@ -19,15 +19,9 @@ fun LineChart(
     graphColor: Color
 ) {
     val spacing = 0f
-    val transparentGraphColor = remember {
-        graphColor.copy(alpha = 0.5f)
-    }
-    val upperValue = remember(data) {
-        data.maxOf { it.y }
-    }
-    val lowerValue = remember(data) {
-        data.minOf { it.y }
-    }
+    val transparentGraphColor = graphColor.copy(alpha = 0.5f)
+    val upperValue = data.maxOf { it.y }
+    val lowerValue = data.minOf { it.y }
     val density = LocalDensity.current
     val textPaint = remember(density) {
         Paint().apply {

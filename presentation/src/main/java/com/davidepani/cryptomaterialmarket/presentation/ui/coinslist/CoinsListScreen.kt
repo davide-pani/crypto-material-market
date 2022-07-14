@@ -6,7 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -28,8 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
-import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
@@ -64,39 +65,57 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                 },
                 scrollBehavior = scrollBehavior
             )
-        },
-        content = { innerPadding ->
+        }
+    ) { innerPadding ->
 
-            LazyColumn(
-                contentPadding = innerPadding,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+        val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
 
-                item {
-                    PoweredByCoinGeckoItem { viewModel.sortCoinsList(Ordering.PriceAsc) }
+        LazyColumn(
+            contentPadding = innerPadding,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            item {
+                PoweredByCoinGeckoItem {
+                    viewModel.updateSettings()
+                    coinItems.refresh()
                 }
+            }
 
-                items(viewModel.itemsList, key = { it.symbol }) { item ->
+            items(coinItems, key = { it.marketCapRank }) { item ->
 
+                if (item != null) {
                     CoinItem(
                         item = item,
                         onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
                     )
-
                 }
 
-                item {
-                    when(val item = viewModel.stateItem.value) {
-                        is CoinsListState.LoadMore -> LoadMoreItem(onLoadMoreClick = { viewModel.onLoadMoreButtonClick() })
-                        is CoinsListState.Loading -> LoadingItem(item = item)
-                        is CoinsListState.Error -> ErrorItem(item = item, onRetryClick = { viewModel.onRetryButtonClick() })
+            }
+
+            item {
+                with(coinItems.loadState) {
+                    when {
+                        refresh is LoadState.Loading -> LoadingItem(modifier = Modifier.fillParentMaxHeight())
+                        append is LoadState.Loading -> LoadingItem(modifier = Modifier.wrapContentHeight())
+                        refresh is LoadState.Error -> ErrorItem(
+                            modifier = Modifier.fillParentMaxHeight(),
+                            item = CoinsListState.Error((refresh as LoadState.Error).error.toString())) {
+                            coinItems.retry()
+                        }
+                        append is LoadState.Error -> ErrorItem(
+                            modifier = Modifier.wrapContentHeight(),
+                            item = CoinsListState.Error((append as LoadState.Error).error.toString())) {
+                            coinItems.retry()
+                        }
                     }
                 }
 
             }
 
         }
-    )
+
+    }
 
 }
 
@@ -128,15 +147,15 @@ private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
 
 @Composable
 private fun ErrorItem(
+    modifier: Modifier,
     item: CoinsListState.Error,
     onRetryClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp)
-            .wrapContentHeight()
             .fillMaxWidth(),
-        verticalArrangement =Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = item.message, color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
@@ -152,38 +171,14 @@ private fun ErrorItem(
 }
 
 @Composable
-private fun LoadMoreItem(
-    onLoadMoreClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .wrapContentHeight()
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlinedButton(
-            onClick = { onLoadMoreClick.invoke() },
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = StocksDarkPrimaryText
-            )
-        ) {
-            Text(text = "Load more coins")
-        }
-    }
-}
-
-@Composable
-private fun LoadingItem(item: CoinsListState.Loading) {
+private fun LoadingItem(modifier: Modifier) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
-            .wrapContentHeight()
     ) {
         CircularProgressIndicator(color = StocksDarkPrimaryText)
         Text(
