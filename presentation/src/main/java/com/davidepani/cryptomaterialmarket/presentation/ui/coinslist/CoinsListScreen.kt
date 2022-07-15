@@ -1,15 +1,21 @@
 package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,6 +43,7 @@ import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +56,14 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
         decayAnimationSpec,
         rememberTopAppBarScrollState()
     )
+
+    val coinsListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val isButtonVisible = remember {
+        derivedStateOf {
+            coinsListState.firstVisibleItemIndex >= 5
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -71,6 +86,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
         val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
 
         LazyColumn(
+            state = coinsListState,
             contentPadding = innerPadding,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -113,6 +129,31 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
             }
 
+        }
+        
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            AnimatedVisibility(
+                visible = isButtonVisible.value,
+                //enter = fadeIn(),
+                //exit = fadeOut()
+            ) {
+                SmallFloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            coinsListState.animateScrollToItem(0)
+                        }
+                    },
+                    modifier = Modifier.padding(8.dp),
+                ) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowUp, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+                    //Text(text = "Back to top", color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
         }
 
     }
