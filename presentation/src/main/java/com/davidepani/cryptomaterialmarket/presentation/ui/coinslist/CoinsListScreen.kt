@@ -134,7 +134,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentAlignment = Alignment.BottomCenter
+            contentAlignment = Alignment.TopCenter
         ) {
             AnimatedVisibility(
                 visible = isButtonVisible.value,
@@ -147,7 +147,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                             coinsListState.animateScrollToItem(0)
                         }
                     },
-                    modifier = Modifier.padding(8.dp).alpha(.8f)
+                    modifier = Modifier.padding(8.dp)
                 ) {
                     Icon(painterResource(id = R.drawable.ic_double_up_arrow), contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
                     //Text(text = "Back to top", color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(horizontal = 16.dp))
