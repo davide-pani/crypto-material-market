@@ -24,6 +24,7 @@ class UiMapper @Inject constructor(
 
     fun mapCoinUiItem(coin: Coin): CoinUiItem {
         return CoinUiItem(
+            id = coin.id,
             name = coin.name,
             symbol = coin.symbol.uppercase(),
             imageUrl = coin.image,
@@ -46,8 +47,7 @@ class UiMapper @Inject constructor(
                 if (index % 3 == 0) {
                     DataPoint(x = index.toDouble(), y = d, label = null)
                 } else null
-            }?.filterNotNull(),
-            businessModelReference = coin
+            }?.filterNotNull()
         )
     }
 

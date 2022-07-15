@@ -41,6 +41,7 @@ import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineCh
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
+import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
 import kotlinx.coroutines.launch
 
@@ -60,9 +61,11 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
     val isButtonVisible = remember {
         derivedStateOf {
-            coinsListState.firstVisibleItemIndex >= 5
+            coinsListState.firstVisibleItemIndex >= 7
         }
     }
+
+    val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -82,22 +85,20 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
         }
     ) { innerPadding ->
 
-        val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
-
         LazyColumn(
             state = coinsListState,
             contentPadding = innerPadding,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            item {
+            item(key = "PoweredByCoinGeckoItem") {
                 PoweredByCoinGeckoItem {
                     viewModel.updateSettings()
                     coinItems.refresh()
                 }
             }
 
-            items(coinItems, key = { it.marketCapRank }) { item ->
+            items(coinItems, key = { it.id }) { item ->
 
                 item?.let {
                     CoinItem(
@@ -108,7 +109,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
             }
 
-            item {
+            item(key = "LoadStateItem") {
                 with(coinItems.loadState) {
                     when {
                         refresh is LoadState.Loading -> LoadingItem(modifier = Modifier.fillParentMaxHeight())
@@ -144,7 +145,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                 SmallFloatingActionButton(
                     onClick = {
                         coroutineScope.launch {
-                            coinsListState.animateScrollToItem(0)
+                            coinsListState.animateScrollToItem(1)
                         }
                     },
                     modifier = Modifier.padding(8.dp)
@@ -258,6 +259,12 @@ private fun CoinItem(
         ) {
 
             val (iconImage, nameColumn, chart, priceColumn, maxWidthInvisiblePriceText) = createRefs()
+            val showChart = remember {
+                !item.sparklineData.isNullOrEmpty() && item.trendColor != null
+            }
+            val showTrend = remember {
+                !item.priceChangePercentage.isNullOrBlank() && item.trendColor != null
+            }
 
             AsyncImage(
                 model = item.imageUrl,
@@ -319,7 +326,7 @@ private fun CoinItem(
 
             }
 
-            if (!item.sparklineData.isNullOrEmpty() && item.trendColor != null) {
+            if (showChart) {
                 // Invisible text with max price size to determine the max possible size of this column
                 Text(
                     text = "$100,000.00",
@@ -340,8 +347,8 @@ private fun CoinItem(
                             end.linkTo(maxWidthInvisiblePriceText.start, margin = 4.dp)
                         }
                         .size(width = 50.dp, height = 30.dp),
-                    data = item.sparklineData,
-                    graphColor = item.trendColor
+                    data = item.sparklineData.orEmpty(),
+                    graphColor = item.trendColor ?: PositiveTrend
                 )
             }
 
@@ -363,17 +370,17 @@ private fun CoinItem(
                     maxLines = 1
                 )
 
-                if (!item.priceChangePercentage.isNullOrBlank() && item.trendColor != null ) {
+                if (showTrend) {
                     Card(
                         modifier = Modifier.sizeIn(minWidth = 72.dp),
                         shape = MaterialTheme.shapes.small,
                         colors = CardDefaults.cardColors(
-                            containerColor = item.trendColor,
+                            containerColor = item.trendColor ?: PositiveTrend,
                             contentColor = Color.White
                         )
                     ) {
                         Text(
-                            text = item.priceChangePercentage,
+                            text = item.priceChangePercentage.orEmpty(),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 1.dp)

@@ -10,6 +10,7 @@ class DataMapper @Inject constructor() {
 
     fun mapCoin(coinResponse: CoinApiResponse): Coin {
         return Coin(
+            id = coinResponse.id,
             name = coinResponse.name,
             symbol = coinResponse.symbol,
             price = coinResponse.currentPrice,
