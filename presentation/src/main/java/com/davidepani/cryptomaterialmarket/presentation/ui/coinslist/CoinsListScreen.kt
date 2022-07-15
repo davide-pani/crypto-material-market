@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -130,7 +129,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
             }
 
         }
-        
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -148,12 +147,13 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                             coinsListState.animateScrollToItem(0)
                         }
                     },
-                    modifier = Modifier.padding(8.dp),
+                    modifier = Modifier.padding(8.dp).alpha(.8f)
                 ) {
-                    Icon(imageVector = Icons.Filled.KeyboardArrowUp, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
-                    //Text(text = "Back to top", color = MaterialTheme.colorScheme.onBackground)
+                    Icon(painterResource(id = R.drawable.ic_double_up_arrow), contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+                    //Text(text = "Back to top", color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(horizontal = 16.dp))
                 }
             }
+
         }
 
     }
