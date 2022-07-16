@@ -142,7 +142,7 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                 //enter = fadeIn(),
                 //exit = fadeOut()
             ) {
-                SmallFloatingActionButton(
+                FloatingActionButton(
                     onClick = {
                         coroutineScope.launch {
                             coinsListState.animateScrollToItem(1)
