@@ -43,6 +43,8 @@ import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +69,12 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
 
     val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
 
+    val refreshState = remember {
+        derivedStateOf {
+            coinItems.loadState.refresh is LoadState.Loading && coinItems.itemCount > 0
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -85,46 +93,54 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
         }
     ) { innerPadding ->
 
-        LazyColumn(
-            state = coinsListState,
-            contentPadding = innerPadding,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = refreshState.value),
+            onRefresh = { coinItems.refresh() },
+            indicatorPadding = innerPadding
         ) {
 
-            item(key = "PoweredByCoinGeckoItem") {
-                PoweredByCoinGeckoItem {
-                    viewModel.updateSettings()
-                    coinItems.refresh()
-                }
-            }
+            LazyColumn(
+                state = coinsListState,
+                contentPadding = innerPadding,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
 
-            items(coinItems, key = { it.id }) { item ->
-
-                item?.let {
-                    CoinItem(
-                        item = it,
-                        onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
-                    )
+                item(key = "PoweredByCoinGeckoItem") {
+                    PoweredByCoinGeckoItem {
+                        viewModel.updateSettings()
+                        coinItems.refresh()
+                    }
                 }
 
-            }
+                items(coinItems, key = { it.id }) { item ->
 
-            item(key = "LoadStateItem") {
-                with(coinItems.loadState) {
-                    when {
-                        refresh is LoadState.Loading -> LoadingItem(modifier = Modifier.fillParentMaxHeight())
-                        append is LoadState.Loading -> LoadingItem(modifier = Modifier.wrapContentHeight())
-                        refresh is LoadState.Error -> ErrorItem(
-                            modifier = Modifier.fillParentMaxHeight(),
-                            item = CoinsListState.Error((refresh as LoadState.Error).error.toString())) {
-                            coinItems.retry()
-                        }
-                        append is LoadState.Error -> ErrorItem(
-                            modifier = Modifier.wrapContentHeight(),
-                            item = CoinsListState.Error((append as LoadState.Error).error.toString())) {
-                            coinItems.retry()
+                    item?.let {
+                        CoinItem(
+                            item = it,
+                            onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
+                        )
+                    }
+
+                }
+
+                item(key = "LoadStateItem") {
+                    with(coinItems.loadState) {
+                        when {
+                            refresh is LoadState.Loading -> LoadingItem(modifier = Modifier.fillParentMaxHeight())
+                            append is LoadState.Loading -> LoadingItem(modifier = Modifier.wrapContentHeight())
+                            refresh is LoadState.Error -> ErrorItem(
+                                modifier = Modifier.fillParentMaxHeight(),
+                                item = CoinsListState.Error((refresh as LoadState.Error).error.toString())) {
+                                coinItems.retry()
+                            }
+                            append is LoadState.Error -> ErrorItem(
+                                modifier = Modifier.wrapContentHeight(),
+                                item = CoinsListState.Error((append as LoadState.Error).error.toString())) {
+                                coinItems.retry()
+                            }
                         }
                     }
+
                 }
 
             }
