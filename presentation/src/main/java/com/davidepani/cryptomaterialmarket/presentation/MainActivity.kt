@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.davidepani.cryptomaterialmarket.presentation.models.Screen
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
+import com.davidepani.cryptomaterialmarket.presentation.ui.coindetail.CoinDetailScreen
 import com.davidepani.cryptomaterialmarket.presentation.ui.coinslist.CoinsListScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dev.olshevski.navigation.reimagined.NavBackHandler
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController) { route ->
                         when(route) {
                             is Screen.CoinsList -> { CoinsListScreen(navController = navController) }
-                            is Screen.CoinDetail -> {}
+                            is Screen.CoinDetail -> { CoinDetailScreen(coinId = route.coinId) }
                         }
                     }
 

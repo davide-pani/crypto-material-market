@@ -49,6 +49,7 @@ import dev.olshevski.navigation.reimagined.hilt.hiltViewModel
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoinsListScreen(
@@ -64,19 +65,19 @@ fun CoinsListScreen(
         rememberTopAppBarScrollState()
     )
 
-    val coinsListState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
-    val isButtonVisible = remember {
-        derivedStateOf {
-            coinsListState.firstVisibleItemIndex >= 7
-        }
-    }
-
     val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
 
     val refreshState = remember {
         derivedStateOf {
             coinItems.loadState.refresh is LoadState.Loading && coinItems.itemCount > 0
+        }
+    }
+
+    val coinsListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val isButtonVisible = remember {
+        derivedStateOf {
+            coinsListState.firstVisibleItemIndex >= 7
         }
     }
 
