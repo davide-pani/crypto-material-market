@@ -1,6 +1,5 @@
 package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
@@ -31,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -40,16 +38,23 @@ import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
+import com.davidepani.cryptomaterialmarket.presentation.models.Screen
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import dev.olshevski.navigation.reimagined.NavController
+import dev.olshevski.navigation.reimagined.hilt.hiltViewModel
+import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
+fun CoinsListScreen(
+    navController: NavController<Screen>,
+    viewModel: CoinsListViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
 
@@ -117,7 +122,9 @@ fun CoinsListScreen(viewModel: CoinsListViewModel = viewModel()) {
                     item?.let {
                         CoinItem(
                             item = it,
-                            onCoinItemClick = { Toast.makeText(context, "${item.name} clicked", Toast.LENGTH_SHORT).show() }
+                            onCoinItemClick = { itemClicked ->
+                                navController.navigate(Screen.CoinDetail(coinId = itemClicked.id))
+                            }
                         )
                     }
 
@@ -421,6 +428,6 @@ private fun CoinItem(
 @Composable
 fun CoinsListScreenPreview() {
     CryptoMaterialMarketTheme {
-        CoinsListScreen()
+        //CoinsListScreen()
     }
 }
