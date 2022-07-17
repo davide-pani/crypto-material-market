@@ -1,5 +1,7 @@
 package com.davidepani.cryptomaterialmarket.presentation.ui.coindetail
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListWithPagingUseCase
@@ -18,5 +20,7 @@ class CoinDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val coinId: String? get() = savedStateHandle[COIN_DETAIL_PARAMETER]
+
+    val state by mutableStateOf(coinId)
 
 }

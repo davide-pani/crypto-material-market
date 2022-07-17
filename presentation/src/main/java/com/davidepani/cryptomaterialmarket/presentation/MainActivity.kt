@@ -11,6 +11,7 @@ import com.davidepani.cryptomaterialmarket.presentation.models.Screen
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.ui.coindetail.CoinDetailScreen
 import com.davidepani.cryptomaterialmarket.presentation.ui.coinslist.CoinsListScreen
+import com.mxalbert.sharedelements.SharedElementsRoot
 import dagger.hilt.android.AndroidEntryPoint
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavHost
@@ -27,14 +28,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController<Screen>(
-                        startDestination = Screen.CoinsList
-                    )
-                    NavBackHandler(navController)
-                    NavHost(navController) { route ->
-                        when(route) {
-                            is Screen.CoinsList -> { CoinsListScreen(navController = navController) }
-                            is Screen.CoinDetail -> { CoinDetailScreen(coinId = route.coinId) }
+                    SharedElementsRoot {
+                        val navController = rememberNavController<Screen>(
+                            startDestination = Screen.CoinsList
+                        )
+                        NavBackHandler(navController)
+                        NavHost(navController) { route ->
+                            when(route) {
+                                is Screen.CoinsList -> { CoinsListScreen(navController = navController) }
+                                is Screen.CoinDetail -> { CoinDetailScreen(coinId = route.coinId) }
+                            }
                         }
                     }
 

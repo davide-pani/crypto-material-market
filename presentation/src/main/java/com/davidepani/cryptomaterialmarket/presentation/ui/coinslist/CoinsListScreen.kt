@@ -39,11 +39,15 @@ import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.mxalbert.sharedelements.SharedElement
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.hilt.hiltViewModel
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.launch
 
+
+// Key from shared elements transition
+private const val COINS_LIST_SCREEN_KEY = "COINS_LIST_SCREEN_KEY"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +124,7 @@ fun CoinsListScreen(
                     CoinItem(
                         item = item,
                         onCoinItemClick = { itemClicked ->
-                            navController.navigate(Screen.CoinDetail(coinId = itemClicked.id))
+                            navController.navigate(Screen.CoinDetail(coinId = itemClicked.imageUrl))
                         }
                     )
                 }
@@ -280,19 +284,24 @@ private fun CoinItem(
                 !item.priceChangePercentage.isNullOrBlank() && item.trendColor != null
             }
 
-            AsyncImage(
-                model = item.imageUrl,
-                modifier = Modifier
-                    .size(35.dp)
-                    .clip(shape = MaterialTheme.shapes.medium)
-                    .constrainAs(iconImage) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                    },
-                contentDescription = null,
-                filterQuality = FilterQuality.None
-            )
+            Box(
+                modifier = Modifier.size(35.dp).constrainAs(iconImage) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                }
+            ) {
+                SharedElement(key = item.imageUrl, screenKey = COINS_LIST_SCREEN_KEY) {
+                    AsyncImage(
+                        model = item.imageUrl,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clip(shape = MaterialTheme.shapes.medium),
+                        contentDescription = null,
+                        filterQuality = FilterQuality.None
+                    )
+                }
+            }
 
             Column(
                 modifier = Modifier.constrainAs(nameColumn) {
