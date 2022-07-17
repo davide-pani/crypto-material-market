@@ -9,6 +9,6 @@ sealed class Screen : Parcelable {
     object CoinsList : Screen()
 
     @Parcelize
-    data class CoinDetail(val coinId: String) : Screen()
+    data class CoinDetail(val coinId: CoinUiItem) : Screen()
 
 }

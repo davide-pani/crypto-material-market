@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         ) { route ->
                             when(route) {
                                 is Screen.CoinsList -> { CoinsListScreen(navController = navController) }
-                                is Screen.CoinDetail -> { CoinDetailScreen(coinId = route.coinId) }
+                                is Screen.CoinDetail -> { CoinDetailScreen(coinId = route.coinId, navController = navController) }
                             }
                         }
                     }

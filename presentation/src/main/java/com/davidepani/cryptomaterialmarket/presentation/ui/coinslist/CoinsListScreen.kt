@@ -124,7 +124,7 @@ fun CoinsListScreen(
                     CoinItem(
                         item = item,
                         onCoinItemClick = { itemClicked ->
-                            navController.navigate(Screen.CoinDetail(coinId = itemClicked.imageUrl))
+                            navController.navigate(Screen.CoinDetail(coinId = itemClicked))
                         }
                     )
                 }
