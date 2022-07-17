@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
 
     private val mainNavHostTransitionSpec =
         AnimatedNavHostTransitionSpec<Screen> { _, _, _ ->
-            fadeIn(tween()) with fadeOut(tween())
+            fadeIn(tween(0)) with fadeOut(tween(0))
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
