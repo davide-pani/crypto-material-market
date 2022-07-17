@@ -32,6 +32,7 @@ import coil.compose.AsyncImage
 import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
 import com.davidepani.cryptomaterialmarket.presentation.models.Screen
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
@@ -67,6 +68,12 @@ fun CoinsListScreen(
         }
     }
 
+    val isRefreshing = remember {
+        derivedStateOf {
+            viewModel.state is CoinsListUiState.Refreshing
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -86,7 +93,7 @@ fun CoinsListScreen(
     ) { innerPadding ->
 
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = viewModel.state.refreshing),
+            state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
             onRefresh = { viewModel.onSwipeRefresh() },
             indicatorPadding = innerPadding
         ) {
@@ -108,6 +115,7 @@ fun CoinsListScreen(
                         }
                     }
 
+
                     CoinItem(
                         item = item,
                         onCoinItemClick = { itemClicked ->
@@ -117,18 +125,18 @@ fun CoinsListScreen(
                 }
 
                 item(key = "LoadStateItem") {
-                    with(viewModel.state) {
-                        when {
-                            error != null -> ErrorItem(
-                                modifier = Modifier.wrapContentHeight(), 
-                                message = error,
+                    when(val state = viewModel.state) {
+                        is CoinsListUiState.Error -> {
+                            ErrorItem(
+                                modifier = if (state.initial) Modifier.fillParentMaxHeight() else Modifier.wrapContentHeight(),
+                                message = state.message,
                                 onRetryClick = { viewModel.onRetryClick() }
                             )
-                            loading -> {
-                                LoadingItem(modifier = Modifier.wrapContentHeight())
-                            }
-                            else -> {}
                         }
+                        is CoinsListUiState.Loading -> {
+                            LoadingItem(modifier = if (state.initial) Modifier.fillParentMaxHeight() else Modifier.wrapContentHeight())
+                        }
+                        else -> {}
                     }
                 }
 

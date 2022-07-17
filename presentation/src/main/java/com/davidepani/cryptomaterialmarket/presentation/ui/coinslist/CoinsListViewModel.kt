@@ -11,10 +11,11 @@ import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.domain.usecases.UpdateSettingsUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
+import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class CoinsListViewModel @Inject constructor(
 ) : ViewModel() {
 
     val itemsList = mutableStateListOf<CoinUiItem>()
-    var state by mutableStateOf(CoinsListState())
+    var state by mutableStateOf<CoinsListUiState>(CoinsListUiState.Idle)
         private set
 
     private var numLoadedPages = 0
@@ -40,40 +41,39 @@ class CoinsListViewModel @Inject constructor(
 
 
     fun getNextPage() {
-        if (state.loading || state.refreshing || state.listFullyLoaded) {
+        if (state is CoinsListUiState.Loading || state is CoinsListUiState.Refreshing || state is CoinsListUiState.FullyLoadedList) {
             return
         }
 
         val pageToLoad = numLoadedPages + 1
 
-        state = state.copy(loading = true)
+        state = CoinsListUiState.Loading(initial = itemsList.isEmpty())
 
         loadingJob = viewModelScope.launch {
             val result = getCoinsListUseCase(page = pageToLoad)
-
             handleGetCoinsListResult(result)
-            state = state.copy(loading = false)
-
             loadingJob = null
         }
     }
 
     private fun refresh() {
-        loadingJob?.cancel()
-        refreshJob?.cancel()
-        state = state.copy(refreshing = true)
+        state = CoinsListUiState.Refreshing
+
+        val oldRefreshJob = refreshJob
 
         refreshJob = viewModelScope.launch {
+            loadingJob?.cancelAndJoin()
+            oldRefreshJob?.cancelAndJoin()
+
+            // Ensures that after having cancelled all the eventual pending jobs
+            // the state is Refreshing
+            state = CoinsListUiState.Refreshing
+
             val result = getCoinsListUseCase(page = 1)
 
             itemsList.clear()
             numLoadedPages = 0
-            state = state.copy(listFullyLoaded = false)
-
             handleGetCoinsListResult(result)
-            state = state.copy(refreshing = false)
-            state = state.copy(loading = false)
-
             refreshJob = null
         }
     }
@@ -81,29 +81,29 @@ class CoinsListViewModel @Inject constructor(
     private fun handleGetCoinsListResult(result: Result<List<Coin>>) {
         when (result) {
             is Result.Success -> {
-                if (result.value.size < settingsConfiguration.coinsListPageSize) {
-                    state = state.copy(listFullyLoaded = true)
+                itemsList.addAll(mapper.mapCoinUiItemsList(result.value))
+
+                state = if (result.value.size < settingsConfiguration.coinsListPageSize) {
+                    CoinsListUiState.FullyLoadedList
                 } else {
                     numLoadedPages++
+                    CoinsListUiState.Idle
                 }
-
-                itemsList.addAll(mapper.mapCoinUiItemsList(result.value))
             }
             is Result.Failure -> {
                 // CancellationExceptions are not displayed as errors to the user
                 // as they are handled internally by this class
                 if (result.error !is CancellationException) {
-                    state = state.copy(error = mapper.mapErrorToUiMessage(result.error))
+                    state = CoinsListUiState.Error(
+                        initial = itemsList.isEmpty(),
+                        message = mapper.mapErrorToUiMessage(result.error)
+                    )
                 }
             }
         }
     }
 
     fun onRetryClick() {
-        getNextPage()
-    }
-
-    fun onLoadMoreButtonClick() {
         getNextPage()
     }
 

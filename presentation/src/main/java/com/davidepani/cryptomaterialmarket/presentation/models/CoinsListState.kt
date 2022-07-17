@@ -1,9 +1,11 @@
 package com.davidepani.cryptomaterialmarket.presentation.models
 
-data class CoinsListState(
-    val refreshing: Boolean = false,
-    val loading: Boolean = false,
-    val error: String? = null,
-    val listFullyLoaded: Boolean = false
-)
+sealed class CoinsListUiState {
+    object Idle : CoinsListUiState()
+    object Refreshing : CoinsListUiState()
+    data class Loading(val initial: Boolean) : CoinsListUiState()
+    data class Error(val initial: Boolean, val message: String) : CoinsListUiState()
+    object FullyLoadedList : CoinsListUiState()
+}
+
 
