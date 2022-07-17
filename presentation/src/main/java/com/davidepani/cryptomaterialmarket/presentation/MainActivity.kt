@@ -3,6 +3,11 @@ package com.davidepani.cryptomaterialmarket.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,12 +18,20 @@ import com.davidepani.cryptomaterialmarket.presentation.ui.coindetail.CoinDetail
 import com.davidepani.cryptomaterialmarket.presentation.ui.coinslist.CoinsListScreen
 import com.mxalbert.sharedelements.SharedElementsRoot
 import dagger.hilt.android.AndroidEntryPoint
+import dev.olshevski.navigation.reimagined.AnimatedNavHost
+import dev.olshevski.navigation.reimagined.AnimatedNavHostTransitionSpec
 import dev.olshevski.navigation.reimagined.NavBackHandler
-import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.rememberNavController
 
 @AndroidEntryPoint
+@OptIn(ExperimentalAnimationApi::class)
 class MainActivity : ComponentActivity() {
+
+    private val mainNavHostTransitionSpec =
+        AnimatedNavHostTransitionSpec<Screen> { _, _, _ ->
+            fadeIn(tween()) with fadeOut(tween())
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -33,7 +46,10 @@ class MainActivity : ComponentActivity() {
                             startDestination = Screen.CoinsList
                         )
                         NavBackHandler(navController)
-                        NavHost(navController) { route ->
+                        AnimatedNavHost(
+                            controller = navController,
+                            transitionSpec = mainNavHostTransitionSpec
+                        ) { route ->
                             when(route) {
                                 is Screen.CoinsList -> { CoinsListScreen(navController = navController) }
                                 is Screen.CoinDetail -> { CoinDetailScreen(coinId = route.coinId) }

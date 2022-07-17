@@ -37,9 +37,9 @@ fun CoinDetailScreen(
                     model = it,
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(shape = MaterialTheme.shapes.medium),
+                        .clip(shape = MaterialTheme.shapes.extraLarge),
                     contentDescription = null,
-                    filterQuality = FilterQuality.None
+                    filterQuality = FilterQuality.High
                 )
             }
         }
