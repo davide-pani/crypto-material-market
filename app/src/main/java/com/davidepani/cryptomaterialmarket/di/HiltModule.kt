@@ -44,7 +44,8 @@ object HiltModule {
     fun provideSettingsConfiguration(): SettingsConfiguration {
         return SettingsConfiguration(
             currency = Currency.USD,
-            ordering = Ordering.MarketCapDesc
+            ordering = Ordering.MarketCapDesc,
+            coinsListPageSize = 25
         )
     }
 

@@ -6,14 +6,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,14 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.customcomposables.LineChart
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
-import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.models.Screen
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
@@ -64,14 +58,6 @@ fun CoinsListScreen(
         decayAnimationSpec,
         rememberTopAppBarScrollState()
     )
-
-    val coinItems = viewModel.pagedCoinItemsFlow.collectAsLazyPagingItems()
-
-    val refreshState = remember {
-        derivedStateOf {
-            coinItems.loadState.refresh is LoadState.Loading && coinItems.itemCount > 0
-        }
-    }
 
     val coinsListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -100,8 +86,8 @@ fun CoinsListScreen(
     ) { innerPadding ->
 
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = refreshState.value),
-            onRefresh = { coinItems.refresh() },
+            state = rememberSwipeRefreshState(isRefreshing = viewModel.state.refreshing),
+            onRefresh = { viewModel.onSwipeRefresh() },
             indicatorPadding = innerPadding
         ) {
 
@@ -112,43 +98,38 @@ fun CoinsListScreen(
             ) {
 
                 item(key = "PoweredByCoinGeckoItem") {
-                    PoweredByCoinGeckoItem {
-                        viewModel.updateSettings()
-                        coinItems.refresh()
-                    }
+                    PoweredByCoinGeckoItem { viewModel.updateSettings() }
                 }
 
-                items(coinItems, key = { it.id }) { item ->
-
-                    item?.let {
-                        CoinItem(
-                            item = it,
-                            onCoinItemClick = { itemClicked ->
-                                navController.navigate(Screen.CoinDetail(coinId = itemClicked.id))
-                            }
-                        )
-                    }
-
-                }
-
-                item(key = "LoadStateItem") {
-                    with(coinItems.loadState) {
-                        when {
-                            refresh is LoadState.Loading -> LoadingItem(modifier = Modifier.fillParentMaxHeight())
-                            append is LoadState.Loading -> LoadingItem(modifier = Modifier.wrapContentHeight())
-                            refresh is LoadState.Error -> ErrorItem(
-                                modifier = Modifier.fillParentMaxHeight(),
-                                item = CoinsListState.Error((refresh as LoadState.Error).error.toString())) {
-                                coinItems.retry()
-                            }
-                            append is LoadState.Error -> ErrorItem(
-                                modifier = Modifier.wrapContentHeight(),
-                                item = CoinsListState.Error((append as LoadState.Error).error.toString())) {
-                                coinItems.retry()
-                            }
+                itemsIndexed(viewModel.itemsList, key = { _: Int, item: CoinUiItem ->  item.id }) { index, item ->
+                    LaunchedEffect(key1 = index) {
+                        if (index >= viewModel.itemsList.size - 10) {
+                            viewModel.getNextPage()
                         }
                     }
 
+                    CoinItem(
+                        item = item,
+                        onCoinItemClick = { itemClicked ->
+                            navController.navigate(Screen.CoinDetail(coinId = itemClicked.id))
+                        }
+                    )
+                }
+
+                item(key = "LoadStateItem") {
+                    with(viewModel.state) {
+                        when {
+                            error != null -> ErrorItem(
+                                modifier = Modifier.wrapContentHeight(), 
+                                message = error,
+                                onRetryClick = { viewModel.onRetryClick() }
+                            )
+                            loading -> {
+                                LoadingItem(modifier = Modifier.wrapContentHeight())
+                            }
+                            else -> {}
+                        }
+                    }
                 }
 
             }
@@ -214,7 +195,7 @@ private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
 @Composable
 private fun ErrorItem(
     modifier: Modifier,
-    item: CoinsListState.Error,
+    message: String,
     onRetryClick: () -> Unit
 ) {
     Column(
@@ -224,7 +205,7 @@ private fun ErrorItem(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = item.message, color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
+        Text(text = message, color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
         OutlinedButton(
             onClick = { onRetryClick.invoke() },
             colors = ButtonDefaults.outlinedButtonColors(

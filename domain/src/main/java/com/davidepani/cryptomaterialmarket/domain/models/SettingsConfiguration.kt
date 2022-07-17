@@ -6,7 +6,8 @@ import javax.inject.Singleton
 @Singleton
 class SettingsConfiguration @Inject constructor(
     internal var currency: Currency,
-    internal var ordering: Ordering
+    internal var ordering: Ordering,
+    val coinsListPageSize: Int
 ) {
 
     fun getCurrency() = currency

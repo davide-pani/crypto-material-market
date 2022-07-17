@@ -2,27 +2,22 @@ package com.davidepani.cryptomaterialmarket.domain.usecases
 
 import com.davidepani.cryptomaterialmarket.domain.interfaces.CoinsRepository
 import com.davidepani.cryptomaterialmarket.domain.models.Coin
-import com.davidepani.cryptomaterialmarket.domain.models.Currency
-import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.domain.models.Result
+import com.davidepani.cryptomaterialmarket.domain.models.SettingsConfiguration
 import javax.inject.Inject
 
 
 class GetCoinsListUseCase @Inject constructor(
-    private val coinsRepository: CoinsRepository
+    private val coinsRepository: CoinsRepository,
+    private val settingsConfiguration: SettingsConfiguration
 ) {
 
-    suspend operator fun invoke(
-        currency: Currency = Currency.USD,
-        numCoinsPerPage: Int = 100,
-        page: Int = 1,
-        ordering: Ordering = Ordering.MarketCapDesc
-    ): Result<List<Coin>> {
+    suspend operator fun invoke(page: Int): Result<List<Coin>> {
         return coinsRepository.retrieveCoinsList(
-            currency = currency,
-            numCoinsPerPage = numCoinsPerPage,
+            currency = settingsConfiguration.getCurrency(),
+            numCoinsPerPage = settingsConfiguration.coinsListPageSize,
             page = page,
-            ordering = ordering,
+            ordering = settingsConfiguration.getOrdering(),
             includeSparklineData = true
         )
     }
