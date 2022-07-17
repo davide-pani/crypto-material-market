@@ -95,6 +95,7 @@ fun CoinsListScreen(
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
             onRefresh = { viewModel.onSwipeRefresh() },
+            modifier = Modifier.fillMaxSize(),
             indicatorPadding = innerPadding
         ) {
 
@@ -108,7 +109,7 @@ fun CoinsListScreen(
                     PoweredByCoinGeckoItem { viewModel.updateSettings() }
                 }
 
-                itemsIndexed(viewModel.itemsList, key = { _: Int, item: CoinUiItem ->  item.id }) { index, item ->
+                itemsIndexed(viewModel.itemsList, key = { _: Int, item: CoinUiItem ->  item.id + item.marketCapRank }) { index, item ->
                     LaunchedEffect(key1 = index) {
                         if (index >= viewModel.itemsList.size - 10) {
                             viewModel.getNextPage()
