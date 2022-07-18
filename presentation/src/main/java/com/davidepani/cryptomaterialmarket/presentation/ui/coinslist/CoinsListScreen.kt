@@ -3,7 +3,6 @@ package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -110,7 +109,7 @@ fun CoinsListScreen(
             ) {
 
                 item(key = "PoweredByCoinGeckoItem") {
-                    PoweredByCoinGeckoItem { viewModel.updateSettings() }
+                    PoweredByCoinGeckoItem()
                 }
 
                 itemsIndexed(viewModel.itemsList, key = { _: Int, item: CoinUiItem ->  item.id + item.marketCapRank }) { index, item ->
@@ -181,12 +180,11 @@ fun CoinsListScreen(
 
 
 @Composable
-private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
+private fun PoweredByCoinGeckoItem() {
 
     Row(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onClick.invoke() },
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
