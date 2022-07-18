@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.davidepani.cryptomaterialmarket.data.api.CoinGeckoApiService
+import com.davidepani.cryptomaterialmarket.data.local.Dao
 import com.davidepani.cryptomaterialmarket.data.mappers.DataMapper
 import com.davidepani.cryptomaterialmarket.data.paging.CoinGeckoCoinsPagingSource
 import com.davidepani.cryptomaterialmarket.domain.interfaces.CoinsRepository
@@ -15,7 +16,9 @@ import javax.inject.Inject
 
 class CoinGeckoCoinsRepository @Inject constructor(
     private val coinGeckoApiService: CoinGeckoApiService,
-    private val mapper: DataMapper
+    private val dao: Dao,
+    private val mapper: DataMapper,
+    private val settingsConfiguration: SettingsConfiguration
 ) : CoinsRepository {
 
     override suspend fun retrieveCoinsList(
@@ -34,6 +37,10 @@ class CoinGeckoCoinsRepository @Inject constructor(
                 includeSparkline7dData = includeSparklineData,
                 priceChangePercentageIntervals = "7d"
             )
+
+            coinsList.forEach {
+                dao.save(it)
+            }
 
             Result.Success(mapper.mapCoinsList(coinsList))
         } catch(e: Exception) {
@@ -65,6 +72,12 @@ class CoinGeckoCoinsRepository @Inject constructor(
             )
         }.flow.map { pagingData ->
             pagingData.map { mapper.mapCoin(it) }
+        }
+    }
+
+    override fun retrieveCoinsListFlow(): Flow<List<Coin>> {
+        return dao.getAllCoins().map {
+            it.map { mapper.mapCoin(it) }.sortedBy { it.marketCapRank }
         }
     }
 

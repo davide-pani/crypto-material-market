@@ -77,6 +77,8 @@ fun CoinsListScreen(
         }
     }
 
+    val itemss = viewModel.itemsList.collectAsState(initial = emptyList())
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -112,9 +114,9 @@ fun CoinsListScreen(
                     PoweredByCoinGeckoItem()
                 }
 
-                itemsIndexed(viewModel.itemsList, key = { _: Int, item: CoinUiItem ->  item.id + item.marketCapRank }) { index, item ->
+                itemsIndexed(itemss.value, key = { _: Int, item: CoinUiItem ->  item.id + item.marketCapRank }) { index, item ->
                     LaunchedEffect(key1 = index) {
-                        if (index >= viewModel.itemsList.size - 10) {
+                        if (index >= itemss.value.size - 10) {
                             viewModel.getNextPage()
                         }
                     }
@@ -283,11 +285,13 @@ private fun CoinItem(
             }
 
             Box(
-                modifier = Modifier.size(35.dp).constrainAs(iconImage) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                }
+                modifier = Modifier
+                    .size(35.dp)
+                    .constrainAs(iconImage) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                    }
             ) {
                 SharedElement(key = item.imageUrl, screenKey = COINS_LIST_SCREEN_KEY) {
                     AsyncImage(

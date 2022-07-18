@@ -22,4 +22,6 @@ interface CoinsRepository {
         includeSparklineData: Boolean = false
     ): Flow<PagingData<Coin>>
 
+    fun retrieveCoinsListFlow(): Flow<List<Coin>>
+
 }
