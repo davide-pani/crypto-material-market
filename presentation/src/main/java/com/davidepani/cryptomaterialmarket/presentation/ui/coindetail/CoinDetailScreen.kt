@@ -1,6 +1,7 @@
 package com.davidepani.cryptomaterialmarket.presentation.ui.coindetail
 
 import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import coil.compose.AsyncImage
@@ -19,6 +20,8 @@ import com.davidepani.cryptomaterialmarket.presentation.R
 import com.davidepani.cryptomaterialmarket.presentation.models.COIN_DETAIL_PARAMETER
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.Screen
+import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
+import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkSecondaryText
 import com.mxalbert.sharedelements.SharedElement
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.hilt.hiltViewModel
@@ -41,28 +44,32 @@ fun CoinDetailScreen(
     val context = LocalContext.current
 
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
+
+    /*
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         decayAnimationSpec,
         rememberTopAppBarScrollState()
     )
 
+     */
+
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        //modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
-                title = { Text(viewModel.coinId?.name ?: "") },
+            SmallTopAppBar(
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = { navController.pop() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_arrow_back_ios),
                             contentDescription = "Localized description",
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 12.dp)
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                //scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
@@ -70,22 +77,51 @@ fun CoinDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding).padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
         ) {
-            viewModel.coinId?.let {
-                SharedElement(key = it.imageUrl, screenKey = COIN_DETAIL_SCREEN_KEY) {
-                    AsyncImage(
-                        model = it.imageUrl,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(shape = MaterialTheme.shapes.extraLarge),
-                        contentDescription = null,
-                        filterQuality = FilterQuality.High
-                    )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight().background(MaterialTheme.colorScheme.background),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                viewModel.coinId?.let {
+                    SharedElement(key = it.imageUrl, screenKey = COIN_DETAIL_SCREEN_KEY) {
+                        AsyncImage(
+                            model = it.imageUrl,
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(shape = MaterialTheme.shapes.large),
+                            contentDescription = null,
+                            filterQuality = FilterQuality.High
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.size(16.dp))
+
+                    Column() {
+                        Text(
+                            text = viewModel.coinId?.name ?: "",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Medium,
+                            color = StocksDarkPrimaryText
+                        )
+                        Text(
+                            text = viewModel.coinId?.symbol ?: "",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = StocksDarkSecondaryText
+                        )
+                    }
                 }
             }
+
+
+
         }
 
     }
