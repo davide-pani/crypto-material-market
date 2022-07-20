@@ -45,7 +45,7 @@ object HiltModule {
         return SettingsConfiguration(
             currency = Currency.USD,
             ordering = Ordering.MarketCapDesc,
-            coinsListPageSize = 25
+            coinsListPageSize = 100
         )
     }
 

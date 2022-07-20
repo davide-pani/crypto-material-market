@@ -18,7 +18,7 @@ class DataMapper @Inject constructor() {
             image = coinResponse.image,
             marketCapRank = coinResponse.marketCapRank,
             priceChangePercentage = coinResponse.priceChangePercentage7dInCurrency,
-            sparklineData = coinResponse.sparklineIn7d?.price
+            sparklineData = null
         )
     }
 

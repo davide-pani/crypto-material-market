@@ -3,14 +3,18 @@ package com.davidepani.cryptomaterialmarket.presentation.ui.coinslist
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -73,7 +77,7 @@ fun CoinsListScreen(
 
     val isRefreshing = remember {
         derivedStateOf {
-            viewModel.state is CoinsListUiState.Refreshing
+            viewModel.state.state is CoinsListUiState.Refreshing
         }
     }
 
@@ -109,17 +113,10 @@ fun CoinsListScreen(
             ) {
 
                 item(key = "PoweredByCoinGeckoItem") {
-                    PoweredByCoinGeckoItem()
+                    PoweredByCoinGeckoItem { viewModel.updateSettings() }
                 }
 
-                itemsIndexed(viewModel.itemsList, key = { _: Int, item: CoinUiItem ->  item.id + item.marketCapRank }) { index, item ->
-                    LaunchedEffect(key1 = index) {
-                        if (index >= viewModel.itemsList.size - 10) {
-                            viewModel.getNextPage()
-                        }
-                    }
-
-
+                items(viewModel.state.coinsList, key = { it.id }) { item ->
                     CoinItem(
                         item = item,
                         onCoinItemClick = { itemClicked ->
@@ -129,10 +126,10 @@ fun CoinsListScreen(
                 }
 
                 item(key = "LoadStateItem") {
-                    when(val state = viewModel.state) {
+                    when(val state = viewModel.state.state) {
                         is CoinsListUiState.Error -> {
                             ErrorItem(
-                                modifier = if (state.initial) Modifier.fillParentMaxHeight() else Modifier.wrapContentHeight(),
+                                modifier = Modifier.fillParentMaxHeight(),
                                 message = state.message,
                                 onRetryClick = { viewModel.onRetryClick() }
                             )
@@ -180,11 +177,12 @@ fun CoinsListScreen(
 
 
 @Composable
-private fun PoweredByCoinGeckoItem() {
+private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
 
     Row(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable { onClick.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

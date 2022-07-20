@@ -1,9 +1,12 @@
 package com.davidepani.cryptomaterialmarket.data.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity
 data class CoinApiResponse(
-    val id: String,
+    @PrimaryKey val id: String,
     val symbol: String,
     val name: String,
     val image: String,
@@ -45,11 +48,8 @@ data class CoinApiResponse(
     val atlChangePercentage: Double,
     @SerializedName("atl_date")
     val atlDate: String,
-    val roi: Roi?,
     @SerializedName("last_updated")
     val lastUpdated: String,
-    @SerializedName("sparkline_in_7d")
-    val sparklineIn7d: SparklineIn7d?,
     @SerializedName("price_change_percentage_7d_in_currency")
     val priceChangePercentage7dInCurrency: Double?
 )
