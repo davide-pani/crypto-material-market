@@ -13,6 +13,7 @@ import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,6 +40,8 @@ class CoinsListViewModel @Inject constructor(
         viewModelScope.launch {
             getCoinsListFlowUseCase().map {
                 mapper.mapCoinUiItemsList(it)
+            }.catch {
+                handleGetCoinsListResult(Result.Failure(it))
             }.collect {
                 if (it.isNotEmpty()) {
                     state = state.copy(
