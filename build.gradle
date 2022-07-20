@@ -22,7 +22,6 @@ buildscript {
         arch_core_testing_version = "2.1.0"
         strikt_version = "0.34.1"
         retrofit_version = "2.9.0"
-        paging_version = "3.1.1"
         timber_version = "5.0.1"
         coroutines_version = "1.6.4"
         room_version = "2.4.2"

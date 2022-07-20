@@ -66,6 +66,7 @@ dependencies {
     implementation "com.github.davide-pani:android-extensions:$android_extensions_version"
     implementation "com.github.davide-pani:kotlin-extensions:$kotlin_extensions_version"
 
+    // Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
 
     // Hilt
