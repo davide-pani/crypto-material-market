@@ -52,9 +52,19 @@ class CoinsListViewModel @Inject constructor(
             }
         }
 
-        refresh()
+        load()
     }
 
+    private fun load() {
+        state = state.copy(
+            state = CoinsListUiState.Loading(true)
+        )
+
+        viewModelScope.launch {
+            val result = getCoinsListUseCase(page = 1)
+            handleGetCoinsListResult(result)
+        }
+    }
 
     private fun refresh() {
         state = state.copy(

@@ -113,7 +113,7 @@ fun CoinsListScreen(
             ) {
 
                 item(key = "PoweredByCoinGeckoItem") {
-                    PoweredByCoinGeckoItem { viewModel.updateSettings() }
+                    Header(isLoading = viewModel.state.state is CoinsListUiState.Loading) { viewModel.updateSettings() }
                 }
 
                 items(viewModel.state.coinsList, key = { it.id }) { item ->
@@ -177,28 +177,52 @@ fun CoinsListScreen(
 
 
 @Composable
-private fun PoweredByCoinGeckoItem(onClick: () -> Unit) {
+private fun Header(
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
 
     Row(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onClick.invoke() },
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = "Powered by ",
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodySmall
-        )
-        Image(
-            modifier = Modifier
-                .requiredHeight(20.dp)
-                .padding(top = 2.dp),
-            painter = painterResource(id = R.drawable.ic_coingecko),
-            contentDescription = null,
-        )
-    }
+        Row(
+            modifier = Modifier.clickable { onClick.invoke() },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Powered by ",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Image(
+                modifier = Modifier
+                    .requiredHeight(20.dp)
+                    .padding(top = 2.dp),
+                painter = painterResource(id = R.drawable.ic_coingecko),
+                contentDescription = null,
+            )
+        }
 
+        if (isLoading) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Updating ",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.requiredSize(20.dp).padding(top = 1.dp),
+                    color = StocksDarkPrimaryText
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -281,11 +305,13 @@ private fun CoinItem(
             }
 
             Box(
-                modifier = Modifier.size(35.dp).constrainAs(iconImage) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                }
+                modifier = Modifier
+                    .size(35.dp)
+                    .constrainAs(iconImage) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                    }
             ) {
                 SharedElement(key = item.imageUrl, screenKey = COINS_LIST_SCREEN_KEY) {
                     AsyncImage(
