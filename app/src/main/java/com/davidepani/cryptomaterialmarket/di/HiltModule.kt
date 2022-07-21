@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
 import java.util.*
 import javax.inject.Singleton
 
@@ -48,5 +49,9 @@ object HiltModule {
             coinsListPageSize = 100
         )
     }
+
+    @Provides
+    @Singleton
+    fun providesDefaultDispatcher(): Dispatchers = Dispatchers
 
 }

@@ -9,15 +9,18 @@ import com.davidepani.cryptomaterialmarket.domain.models.Coin
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.domain.models.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CoinGeckoCoinsRepository @Inject constructor(
     private val coinGeckoApiService: CoinGeckoApiService,
     private val localSource: CoinsDao,
-    private val mapper: DataMapper
+    private val mapper: DataMapper,
+    private val dispatchers: Dispatchers
 ) : CoinsRepository {
 
     override suspend fun retrieveCoinsList(
@@ -28,19 +31,22 @@ class CoinGeckoCoinsRepository @Inject constructor(
         includeSparklineData: Boolean
     ): Result<List<Coin>> {
         return try {
-            val coinsList = coinGeckoApiService.getCoinsMarkets(
-                currency = mapper.mapCurrencyToCoinGeckoApiValue(currency),
-                page = page,
-                numCoinsPerPage = numCoinsPerPage,
-                order = mapper.mapOrderingToCoinGeckoApiValue(ordering),
-                includeSparkline7dData = includeSparklineData,
-                priceChangePercentageIntervals = "7d"
-            )
+            val coinsList = withContext(dispatchers.IO) {
+                val coinsList = coinGeckoApiService.getCoinsMarkets(
+                    currency = mapper.mapCurrencyToCoinGeckoApiValue(currency),
+                    page = page,
+                    numCoinsPerPage = numCoinsPerPage,
+                    order = mapper.mapOrderingToCoinGeckoApiValue(ordering),
+                    includeSparkline7dData = includeSparklineData,
+                    priceChangePercentageIntervals = "7d"
+                )
 
-            localSource.deleteAllCoins()
-            persistCoins(coinsList)
+                localSource.deleteAllCoins()
+                persistCoins(coinsList)
+                mapper.mapCoinsList(coinsList)
+            }
 
-            Result.Success(mapper.mapCoinsList(coinsList))
+            Result.Success(coinsList)
         } catch(e: Exception) {
             Result.Failure(e)
         }
