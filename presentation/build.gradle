@@ -25,12 +25,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '1.8'
     }
 
     buildFeatures {
@@ -56,6 +58,8 @@ dependencies {
     implementation "com.github.davide-pani:android-extensions:$android_extensions_version"
     implementation "com.github.davide-pani:kotlin-extensions:$kotlin_extensions_version"
     implementation 'com.github.davide-pani:android-architectures:1.0'
+
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
 
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation 'androidx.appcompat:appcompat:1.4.2'
