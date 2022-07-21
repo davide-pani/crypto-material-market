@@ -12,6 +12,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import javax.inject.Singleton
 
@@ -38,6 +40,12 @@ object HiltModule {
             minimumFractionDigits = 2,
             divideValueBy100 = true
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideDateTimeFormatter(): DateTimeFormatter {
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
     }
 
     @Provides

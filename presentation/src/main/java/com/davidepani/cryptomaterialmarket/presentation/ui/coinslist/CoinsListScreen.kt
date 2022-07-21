@@ -37,7 +37,6 @@ import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
 import com.davidepani.cryptomaterialmarket.presentation.models.Screen
 import com.davidepani.cryptomaterialmarket.presentation.theme.CryptoMaterialMarketTheme
-import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.StocksDarkPrimaryText
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -295,11 +294,9 @@ private fun CoinItem(
 
             val (iconImage, nameColumn, chart, priceColumn, maxWidthInvisiblePriceText) = createRefs()
             val showChart = remember {
-                !item.sparklineData.isNullOrEmpty() && item.trendColor != null
+                !item.sparklineData.isNullOrEmpty()
             }
-            val showTrend = remember {
-                !item.priceChangePercentage.isNullOrBlank() && item.trendColor != null
-            }
+            val showTrend = true
 
             Box(
                 modifier = Modifier
@@ -390,7 +387,7 @@ private fun CoinItem(
                         }
                         .size(width = 50.dp, height = 30.dp),
                     data = item.sparklineData.orEmpty(),
-                    graphColor = item.trendColor ?: PositiveTrend
+                    graphColor = item.trendColor
                 )
             }
 
@@ -417,12 +414,12 @@ private fun CoinItem(
                         modifier = Modifier.sizeIn(minWidth = 72.dp),
                         shape = MaterialTheme.shapes.small,
                         colors = CardDefaults.cardColors(
-                            containerColor = item.trendColor ?: PositiveTrend,
+                            containerColor = item.trendColor,
                             contentColor = Color.White
                         )
                     ) {
                         Text(
-                            text = item.priceChangePercentage.orEmpty(),
+                            text = item.priceChangePercentage,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 1.dp)

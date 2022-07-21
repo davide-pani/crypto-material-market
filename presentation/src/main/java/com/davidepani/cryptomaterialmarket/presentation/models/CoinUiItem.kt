@@ -13,7 +13,8 @@ data class CoinUiItem(
     val imageUrl: String,
     val price: String,
     val marketCapRank: String,
-    val priceChangePercentage: String?,
-    val trendColor: @RawValue Color?,
-    val sparklineData: List<DataPoint>?
+    val priceChangePercentage: String,
+    val trendColor: @RawValue Color,
+    val sparklineData: List<DataPoint>?,
+    val lastUpdate: String
 ) : Parcelable

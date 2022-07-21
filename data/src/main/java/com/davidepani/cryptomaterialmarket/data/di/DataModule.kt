@@ -1,7 +1,12 @@
 package com.davidepani.cryptomaterialmarket.data.di
 
+import com.davidepani.cryptomaterialmarket.data.local.RoomTopCoinsLocalDataSource
 import com.davidepani.cryptomaterialmarket.data.repositories.CoinGeckoCoinsRepository
+import com.davidepani.cryptomaterialmarket.data.repositories.TopCoinsLocalDataSource
+import com.davidepani.cryptomaterialmarket.data.repositories.TopCoinsRemoteDataSource
+import com.davidepani.cryptomaterialmarket.data.repositories.TopCoinsRepositoryImpl
 import com.davidepani.cryptomaterialmarket.domain.interfaces.CoinsRepository
+import com.davidepani.cryptomaterialmarket.domain.interfaces.TopCoinsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,5 +18,14 @@ abstract class DataModule {
 
     @Binds
     abstract fun bindCoinsRepository(coinGeckoCoinsRepository: CoinGeckoCoinsRepository): CoinsRepository
+
+    @Binds
+    abstract fun bindTopCoinsRepository(topCoinsRepositoryImpl: TopCoinsRepositoryImpl): TopCoinsRepository
+
+    @Binds
+    abstract fun bindTopCoinsRemoteDataSource(coinGeckoCoinsRepository: CoinGeckoCoinsRepository): TopCoinsRemoteDataSource
+
+    @Binds
+    abstract fun bindTopCoinsLocalDataSource(roomTopCoinsLocalDataSource: RoomTopCoinsLocalDataSource): TopCoinsLocalDataSource
 
 }

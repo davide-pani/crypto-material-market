@@ -36,11 +36,12 @@ package com.davidepani.cryptomaterialmarket.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.davidepani.cryptomaterialmarket.data.models.CoinApiResponse
+import androidx.room.TypeConverters
 
-@Database(entities = [CoinApiResponse::class], version = 1, exportSchema = false)
+@Database(entities = [TopCoinEntity::class], version = 1, exportSchema = false)
+@TypeConverters(RoomTypeConverters::class)
 abstract class CoinsDatabase : RoomDatabase() {
 
-    abstract fun coinsDao(): CoinsDao
+    abstract fun topCoinsDao(): TopCoinsDao
 
 }

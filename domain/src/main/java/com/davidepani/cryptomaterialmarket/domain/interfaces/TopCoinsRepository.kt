@@ -3,15 +3,20 @@ package com.davidepani.cryptomaterialmarket.domain.interfaces
 import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.Ordering
+import kotlinx.coroutines.flow.Flow
 
-interface CoinsRepository {
+interface TopCoinsRepository {
 
-    suspend fun retrieveCoinsWithMarketData(
-        currency: Currency = Currency.USD,
-        numCoinsPerPage: Int = 100,
-        page: Int = 1,
-        ordering: Ordering = Ordering.MarketCapDesc,
-        includeSparklineData: Boolean = false
+    fun getTopCoinsFlow(): Flow<List<CoinWithMarketData>>
+
+    suspend fun refreshTopCoins(
+        numCoins: Int,
+        currency: Currency,
+        ordering: Ordering
     ): Result<List<CoinWithMarketData>>
+
+    private fun sortCoins() {
+
+    }
 
 }

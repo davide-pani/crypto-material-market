@@ -1,12 +1,9 @@
-package com.davidepani.cryptomaterialmarket.data.models
+package com.davidepani.cryptomaterialmarket.data.api.coingecko.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity
-data class CoinApiResponse(
-    @PrimaryKey val id: String,
+data class CoinGeckoMarketsDto(
+    val id: String,
     val symbol: String,
     val name: String,
     val image: String,
@@ -48,6 +45,9 @@ data class CoinApiResponse(
     val atlChangePercentage: Double,
     @SerializedName("atl_date")
     val atlDate: String,
+    val roi: Roi?,
+    @SerializedName("sparkline_in_7d")
+    val sparklineIn7d: SparklineIn7d?,
     @SerializedName("last_updated")
     val lastUpdated: String,
     @SerializedName("price_change_percentage_7d_in_currency")
