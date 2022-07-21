@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidepani.cryptomaterialmarket.domain.models.*
+import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListFlowUseCase
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetCoinsListUseCase
 import com.davidepani.cryptomaterialmarket.domain.usecases.UpdateSettingsUseCase
@@ -16,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +32,8 @@ class CoinsListViewModel @Inject constructor(
     var state by mutableStateOf(
         CoinsListState(
             emptyList(),
-            CoinsListUiState.Loading(true)
+            "",
+            CoinsListUiState.Refreshing
         )
     )
     private set
@@ -46,24 +49,14 @@ class CoinsListViewModel @Inject constructor(
                 if (it.isNotEmpty()) {
                     state = state.copy(
                         coinsList = it,
+                        lastUpdateDate = Date().toString(),
                         state = CoinsListUiState.Idle
                     )
                 }
             }
         }
 
-        load()
-    }
-
-    private fun load() {
-        state = state.copy(
-            state = CoinsListUiState.Loading(true)
-        )
-
-        viewModelScope.launch {
-            val result = getCoinsListUseCase(page = 1)
-            handleGetCoinsListResult(result)
-        }
+        refresh()
     }
 
     private fun refresh() {

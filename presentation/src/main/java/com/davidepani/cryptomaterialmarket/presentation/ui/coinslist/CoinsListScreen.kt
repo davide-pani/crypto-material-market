@@ -22,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,7 +58,7 @@ fun CoinsListScreen(
     viewModel: CoinsListViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current
+    //val context = LocalContext.current
 
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
@@ -113,7 +112,7 @@ fun CoinsListScreen(
             ) {
 
                 item(key = "PoweredByCoinGeckoItem") {
-                    Header(isLoading = viewModel.state.state is CoinsListUiState.Loading) { viewModel.updateSettings() }
+                    Header(lastUpdateDate = viewModel.state.lastUpdateDate) { viewModel.updateSettings() }
                 }
 
                 items(viewModel.state.coinsList, key = { it.id }) { item ->
@@ -133,9 +132,6 @@ fun CoinsListScreen(
                                 message = state.message,
                                 onRetryClick = { viewModel.onRetryClick() }
                             )
-                        }
-                        is CoinsListUiState.Loading -> {
-                            LoadingItem(modifier = if (state.initial) Modifier.fillParentMaxHeight() else Modifier.wrapContentHeight())
                         }
                         else -> {}
                     }
@@ -178,9 +174,12 @@ fun CoinsListScreen(
 
 @Composable
 private fun Header(
-    isLoading: Boolean,
+    lastUpdateDate: String,
     onClick: () -> Unit
 ) {
+    val showLastUpdate = remember(lastUpdateDate) {
+        lastUpdateDate.isNotEmpty()
+    }
 
     Row(
         modifier = Modifier
@@ -207,18 +206,16 @@ private fun Header(
             )
         }
 
-        if (isLoading) {
+        if (showLastUpdate) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = "Updating ",
+                    text = "Updated on $lastUpdateDate",
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
-                )
-                CircularProgressIndicator(
-                    modifier = Modifier.requiredSize(20.dp).padding(top = 1.dp),
-                    color = StocksDarkPrimaryText
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.End
                 )
             }
         }
