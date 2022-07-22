@@ -17,10 +17,6 @@ class TopCoinsRepositoryImpl @Inject constructor(
     private val dispatchers: Dispatchers
 ) : TopCoinsRepository {
 
-    private suspend fun persistCoins(coins: List<CoinWithMarketData>) {
-        localSource.insertCoins(coins)
-    }
-
     override fun getTopCoinsFlow(): Flow<TopCoinData> {
         return localSource.getAllCoinsFlow()
             .distinctUntilChanged()
@@ -52,7 +48,7 @@ class TopCoinsRepositoryImpl @Inject constructor(
                 val lastUpdate: LocalDateTime = getLastUpdateDate(sortedCoinsList)
 
                 localSource.deleteAllCoins()
-                persistCoins(sortedCoinsList)
+                localSource.insertCoins(sortedCoinsList)
 
                 TopCoinData(
                     topCoins = sortedCoinsList,
