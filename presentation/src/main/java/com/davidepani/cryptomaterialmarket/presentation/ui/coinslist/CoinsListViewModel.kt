@@ -14,10 +14,8 @@ import com.davidepani.cryptomaterialmarket.domain.usecases.UpdateSettingsUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
-import com.davidepani.kotlinextensions.minutesBetween
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,20 +46,13 @@ class CoinsListViewModel @Inject constructor(
                     lastUpdateDate = uiData.lastUpdate,
                     state = CoinsListUiState.Idle
                 )
-
-                if (shouldUpdate(it)) {
-                    refresh()
-                }
             }
         }
 
         refresh()
     }
 
-    private fun shouldUpdate(topCoinData: TopCoinData): Boolean {
-        val dif = topCoinData.lastUpdate.minutesBetween(LocalDateTime.now())
-        return dif > 5
-    }
+
 
     private fun refresh() {
         state = state.copy(
