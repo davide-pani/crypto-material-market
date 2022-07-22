@@ -5,7 +5,6 @@ import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.SettingsConfiguration
 import com.davidepani.cryptomaterialmarket.domain.models.TopCoinData
-import com.davidepani.cryptomaterialmarket.presentation.extensions.toFormattedString
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.DataPoint
 import com.davidepani.cryptomaterialmarket.presentation.models.TopCoinUiData
@@ -13,6 +12,7 @@ import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.kotlinextensions.formatToCurrency
 import com.davidepani.kotlinextensions.formatToPercentage
+import com.davidepani.kotlinextensions.toFormattedString
 import com.davidepani.kotlinextensions.utils.currencyformatter.CurrencyFormatter
 import com.davidepani.kotlinextensions.utils.numberformatter.NumberFormatter
 import java.io.IOException

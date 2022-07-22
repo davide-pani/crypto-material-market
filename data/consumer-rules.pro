@@ -1,8 +1,12 @@
--keep class com.davidepani.cryptomaterialmarket.data.models.** { *; }
+-keep class com.davidepani.cryptomaterialmarket.data.api.coingecko.models.** { *; }
+-keep class com.davidepani.cryptomaterialmarket.data.local.** { *; }
 
 -keepclassmembers,allowobfuscation class * {
 @com.google.gson.annotations.SerializedName <fields>;
 }
+
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
 
 
 #-keepattributes Signature
