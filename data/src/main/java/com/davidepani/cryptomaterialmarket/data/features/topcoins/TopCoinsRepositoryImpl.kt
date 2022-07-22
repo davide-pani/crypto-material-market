@@ -45,10 +45,12 @@ class TopCoinsRepositoryImpl @Inject constructor(
                     ordering = ordering
                 )
 
-                val lastUpdate: LocalDateTime = getLastUpdateDate(sortedCoinsList)
+                localSource.apply {
+                    deleteAllCoins()
+                    insertCoins(sortedCoinsList)
+                }
 
-                localSource.deleteAllCoins()
-                localSource.insertCoins(sortedCoinsList)
+                val lastUpdate: LocalDateTime = getLastUpdateDate(sortedCoinsList)
 
                 TopCoinData(
                     topCoins = sortedCoinsList,
