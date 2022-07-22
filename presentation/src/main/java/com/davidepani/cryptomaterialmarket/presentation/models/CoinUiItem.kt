@@ -18,3 +18,8 @@ data class CoinUiItem(
     val sparklineData: List<DataPoint>?,
     val lastUpdate: String
 ) : Parcelable
+
+data class TopCoinUiData(
+    val topCoins: List<CoinUiItem>,
+    val lastUpdate: String
+)

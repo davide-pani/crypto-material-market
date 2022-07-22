@@ -4,8 +4,11 @@ import android.os.Build
 import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.SettingsConfiguration
+import com.davidepani.cryptomaterialmarket.domain.models.TopCoinData
+import com.davidepani.cryptomaterialmarket.presentation.extensions.toFormattedString
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinUiItem
 import com.davidepani.cryptomaterialmarket.presentation.models.DataPoint
+import com.davidepani.cryptomaterialmarket.presentation.models.TopCoinUiData
 import com.davidepani.cryptomaterialmarket.presentation.theme.NegativeTrend
 import com.davidepani.cryptomaterialmarket.presentation.theme.PositiveTrend
 import com.davidepani.kotlinextensions.formatToCurrency
@@ -25,6 +28,13 @@ class UiMapper @Inject constructor(
     private val dateTimeFormatter: DateTimeFormatter,
     private val settingsConfiguration: SettingsConfiguration
 ) {
+
+    fun mapTopCoinUiData(topCoinData: TopCoinData): TopCoinUiData {
+        return TopCoinUiData(
+            topCoins = mapCoinUiItemsList(topCoinData.topCoins),
+            lastUpdate = topCoinData.lastUpdate.toFormattedString(dateTimeFormatter)
+        )
+    }
 
     fun mapCoinUiItem(coin: CoinWithMarketData): CoinUiItem {
         return CoinUiItem(
@@ -52,7 +62,7 @@ class UiMapper @Inject constructor(
                     DataPoint(x = index.toDouble(), y = d, label = null)
                 } else null
             }?.filterNotNull(),
-            lastUpdate = coin.lastUpdate.format(dateTimeFormatter).orEmpty()
+            lastUpdate = coin.lastUpdate.toFormattedString(formatter = dateTimeFormatter)
         )
     }
 

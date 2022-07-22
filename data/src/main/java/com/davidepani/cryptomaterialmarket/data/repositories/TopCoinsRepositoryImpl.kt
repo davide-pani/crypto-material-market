@@ -4,10 +4,13 @@ import com.davidepani.cryptomaterialmarket.domain.interfaces.TopCoinsRepository
 import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.Ordering
+import com.davidepani.cryptomaterialmarket.domain.models.TopCoinData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TopCoinsRepositoryImpl @Inject constructor(
@@ -20,11 +23,18 @@ class TopCoinsRepositoryImpl @Inject constructor(
         localSource.insertCoins(coins)
     }
 
-    override fun getTopCoinsFlow(): Flow<List<CoinWithMarketData>> {
-        return localSource.getAllCoinsFlow().distinctUntilChanged()
+    override fun getTopCoinsFlow(): Flow<TopCoinData> {
+        return localSource.getAllCoinsFlow()
+            .distinctUntilChanged()
+            .map {
+                TopCoinData(
+                    topCoins = it,
+                    lastUpdate = getLastUpdateDate(it)
+                )
+            }
     }
 
-    override suspend fun refreshTopCoins(numCoins: Int, currency: Currency, ordering: Ordering): Result<List<CoinWithMarketData>> {
+    override suspend fun refreshTopCoins(numCoins: Int, currency: Currency, ordering: Ordering): Result<TopCoinData> {
         return Result.runCatching {
             withContext(dispatchers.IO) {
                 val coinsList = remoteSource.retrieveTopCoinsWithMarketData(
@@ -38,12 +48,22 @@ class TopCoinsRepositoryImpl @Inject constructor(
                     ordering = ordering
                 )
 
+                val lastUpdate: LocalDateTime = getLastUpdateDate(sortedCoinsList)
+
                 localSource.deleteAllCoins()
                 persistCoins(sortedCoinsList)
 
-                sortedCoinsList
+                TopCoinData(
+                    topCoins = sortedCoinsList,
+                    lastUpdate =lastUpdate
+                )
             }
         }
+    }
+
+    // Gets the most recent last update date among the coins
+    private fun getLastUpdateDate(coinsList: List<CoinWithMarketData>): LocalDateTime {
+        return coinsList.maxOf { it.lastUpdate }
     }
 
     private fun sortCoins(coinsList: List<CoinWithMarketData>, ordering: Ordering): List<CoinWithMarketData> {

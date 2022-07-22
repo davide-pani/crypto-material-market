@@ -5,10 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.Ordering
-import com.davidepani.cryptomaterialmarket.domain.models.SettingsConfiguration
+import com.davidepani.cryptomaterialmarket.domain.models.TopCoinData
 import com.davidepani.cryptomaterialmarket.domain.usecases.GetTopCoinsFlowUseCase
 import com.davidepani.cryptomaterialmarket.domain.usecases.RefreshTopCoinsUseCase
 import com.davidepani.cryptomaterialmarket.domain.usecases.UpdateSettingsUseCase
@@ -17,7 +16,6 @@ import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,7 +24,6 @@ class CoinsListViewModel @Inject constructor(
     private val getTopCoinsFlowUseCase: GetTopCoinsFlowUseCase,
     private val refreshTopCoinsUseCase: RefreshTopCoinsUseCase,
     private val updateSettingsUseCase: UpdateSettingsUseCase,
-    private val settingsConfiguration: SettingsConfiguration,
     private val mapper: UiMapper
 ) : ViewModel() {
 
@@ -42,15 +39,15 @@ class CoinsListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getTopCoinsFlowUseCase().map {
-                mapper.mapCoinUiItemsList(it)
-            }.catch {
+            getTopCoinsFlowUseCase().catch {
                 handleGetCoinsListResult(Result.failure(it))
             }.collect {
-                if (it.isNotEmpty()) {
+                if (it.topCoins.isNotEmpty()) {
+                    val uiData = mapper.mapTopCoinUiData(it)
+
                     state = state.copy(
-                        coinsList = it,
-                        lastUpdateDate = it.first().lastUpdate,
+                        coinsList = uiData.topCoins,
+                        lastUpdateDate = uiData.lastUpdate,
                         state = CoinsListUiState.Idle
                     )
                 }
@@ -71,7 +68,7 @@ class CoinsListViewModel @Inject constructor(
         }
     }
 
-    private fun handleGetCoinsListResult(result: Result<List<CoinWithMarketData>>) {
+    private fun handleGetCoinsListResult(result: Result<TopCoinData>) {
         result.onSuccess {
             state = state.copy(
                 state = CoinsListUiState.Idle
