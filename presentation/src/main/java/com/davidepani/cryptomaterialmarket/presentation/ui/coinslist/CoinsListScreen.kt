@@ -211,10 +211,11 @@ private fun Header(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = "Updated on $lastUpdateDate",
+                    text = "Last update\n$lastUpdateDate",
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.End,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
