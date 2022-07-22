@@ -7,6 +7,8 @@ import com.davidepani.kotlinextensions.utils.currencyformatter.CurrencyFormatter
 import com.davidepani.kotlinextensions.utils.currencyformatter.LocalizedCurrencyFormatter
 import com.davidepani.kotlinextensions.utils.numberformatter.LocalizedNumberFormatter
 import com.davidepani.kotlinextensions.utils.numberformatter.NumberFormatter
+import com.davidepani.kotlinextensions.utils.serialization.SerializationManager
+import com.davidepani.kotlinextensions.utils.serialization.gson.GsonSerializationManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,5 +63,11 @@ object HiltModule {
     @Provides
     @Singleton
     fun providesDefaultDispatcher(): Dispatchers = Dispatchers
+
+    @Provides
+    @Singleton
+    fun provideSerializationManager(): SerializationManager {
+        return GsonSerializationManager()
+    }
 
 }

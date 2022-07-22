@@ -2,7 +2,6 @@ package com.davidepani.cryptomaterialmarket.data.features.topcoins.local.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
 
 @Entity(tableName = "top_coins")
 data class TopCoinEntity(
@@ -14,7 +13,7 @@ data class TopCoinEntity(
     val price: Double,
     val marketCap: Long,
     val priceChangePercentage: Double,
-    val sparklineData: List<Double>?,
+    val sparklineData: String?,
     val rank: Int,
-    val lastUpdate: LocalDateTime
+    val lastUpdate: Long
 )

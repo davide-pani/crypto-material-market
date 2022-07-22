@@ -36,7 +36,7 @@ class UiMapper @Inject constructor(
         )
     }
 
-    fun mapCoinUiItem(coin: CoinWithMarketData): CoinUiItem {
+    private fun mapCoinUiItem(coin: CoinWithMarketData): CoinUiItem {
         return CoinUiItem(
             id = coin.id,
             name = coin.name,
@@ -58,10 +58,8 @@ class UiMapper @Inject constructor(
                 if (it >= 0) PositiveTrend else NegativeTrend
             },
             sparklineData = coin.marketData.sparklineData?.mapIndexed { index, d ->
-                if (index % 3 == 0) {
-                    DataPoint(x = index.toDouble(), y = d, label = null)
-                } else null
-            }?.filterNotNull(),
+                DataPoint(x = index.toDouble(), y = d, label = null)
+            },
             lastUpdate = coin.lastUpdate.toFormattedString(formatter = dateTimeFormatter)
         )
     }
