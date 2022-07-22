@@ -1,4 +1,4 @@
-package com.davidepani.cryptomaterialmarket.data.local
+package com.davidepani.cryptomaterialmarket.data.features.topcoins.local.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

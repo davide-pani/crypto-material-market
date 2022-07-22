@@ -1,6 +1,6 @@
 package com.davidepani.cryptomaterialmarket.data.mappers
 
-import com.davidepani.cryptomaterialmarket.data.local.TopCoinEntity
+import com.davidepani.cryptomaterialmarket.data.features.topcoins.local.models.TopCoinEntity
 import com.davidepani.cryptomaterialmarket.domain.models.CoinMarketData
 import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import javax.inject.Inject

@@ -1,7 +1,7 @@
-package com.davidepani.cryptomaterialmarket.data.local
+package com.davidepani.cryptomaterialmarket.data.features.topcoins.local
 
+import com.davidepani.cryptomaterialmarket.data.features.topcoins.TopCoinsLocalDataSource
 import com.davidepani.cryptomaterialmarket.data.mappers.RoomDataMapper
-import com.davidepani.cryptomaterialmarket.data.repositories.TopCoinsLocalDataSource
 import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

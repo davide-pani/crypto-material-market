@@ -1,4 +1,4 @@
-package com.davidepani.cryptomaterialmarket.data.repositories
+package com.davidepani.cryptomaterialmarket.data.features.topcoins
 
 import com.davidepani.cryptomaterialmarket.domain.interfaces.TopCoinsRepository
 import com.davidepani.cryptomaterialmarket.domain.models.CoinWithMarketData
@@ -6,10 +6,7 @@ import com.davidepani.cryptomaterialmarket.domain.models.Currency
 import com.davidepani.cryptomaterialmarket.domain.models.Ordering
 import com.davidepani.cryptomaterialmarket.domain.models.TopCoinData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -35,7 +32,7 @@ class TopCoinsRepositoryImpl @Inject constructor(
                     topCoins = it,
                     lastUpdate = getLastUpdateDate(it)
                 )
-            }
+            }.flowOn(dispatchers.Default)
     }
 
     override suspend fun refreshTopCoins(numCoins: Int, currency: Currency, ordering: Ordering): Result<TopCoinData> {

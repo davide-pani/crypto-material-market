@@ -1,6 +1,7 @@
-package com.davidepani.cryptomaterialmarket.data.local
+package com.davidepani.cryptomaterialmarket.data.features.topcoins.local
 
 import androidx.room.*
+import com.davidepani.cryptomaterialmarket.data.features.topcoins.local.models.TopCoinEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

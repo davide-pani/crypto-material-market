@@ -1,4 +1,4 @@
-package com.davidepani.cryptomaterialmarket.data.local
+package com.davidepani.cryptomaterialmarket.data.db.room
 
 import androidx.room.TypeConverter
 import java.time.LocalDateTime

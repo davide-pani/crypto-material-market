@@ -2,8 +2,8 @@ package com.davidepani.cryptomaterialmarket.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.davidepani.cryptomaterialmarket.data.local.CoinsDatabase
-import com.davidepani.cryptomaterialmarket.data.local.TopCoinsDao
+import com.davidepani.cryptomaterialmarket.data.db.room.CoinsDatabase
+import com.davidepani.cryptomaterialmarket.data.features.topcoins.local.TopCoinsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +26,7 @@ object LocalModule {
     }
 
     @Provides
+    @Singleton
     fun provideAnimalsDao(
         coinsDatabase: CoinsDatabase
     ): TopCoinsDao = coinsDatabase.topCoinsDao()
