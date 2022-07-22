@@ -14,9 +14,10 @@ import com.davidepani.cryptomaterialmarket.domain.usecases.UpdateSettingsUseCase
 import com.davidepani.cryptomaterialmarket.presentation.mappers.UiMapper
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListState
 import com.davidepani.cryptomaterialmarket.presentation.models.CoinsListUiState
+import com.davidepani.kotlinextensions.minutesBetween
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,22 +40,27 @@ class CoinsListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getTopCoinsFlowUseCase().catch {
-                handleGetCoinsListResult(Result.failure(it))
-            }.collect {
-                if (it.topCoins.isNotEmpty()) {
-                    val uiData = mapper.mapTopCoinUiData(it)
+            getTopCoinsFlowUseCase().collect {
+                val uiData = mapper.mapTopCoinUiData(it)
 
-                    state = state.copy(
-                        coinsList = uiData.topCoins,
-                        lastUpdateDate = uiData.lastUpdate,
-                        state = CoinsListUiState.Idle
-                    )
+                state = state.copy(
+                    coinsList = uiData.topCoins,
+                    lastUpdateDate = uiData.lastUpdate,
+                    state = CoinsListUiState.Idle
+                )
+
+                if (shouldUpdate(it)) {
+                    refresh()
                 }
             }
         }
 
         refresh()
+    }
+
+    private fun shouldUpdate(topCoinData: TopCoinData): Boolean {
+        val dif = topCoinData.lastUpdate.minutesBetween(LocalDateTime.now())
+        return dif > 5
     }
 
     private fun refresh() {

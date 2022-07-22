@@ -8,6 +8,7 @@ import com.davidepani.cryptomaterialmarket.domain.models.TopCoinData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -26,6 +27,9 @@ class TopCoinsRepositoryImpl @Inject constructor(
     override fun getTopCoinsFlow(): Flow<TopCoinData> {
         return localSource.getAllCoinsFlow()
             .distinctUntilChanged()
+            .filter {
+                it.isNotEmpty()
+            }
             .map {
                 TopCoinData(
                     topCoins = it,
