@@ -23,7 +23,9 @@ class CoinGeckoDataMapper @Inject constructor() {
                 price = coinResponse.currentPrice,
                 marketCap = coinResponse.marketCap,
                 priceChangePercentage = coinResponse.priceChangePercentage7dInCurrency!!,
-                sparklineData = coinResponse.sparklineIn7d?.price,
+                sparklineData = coinResponse.sparklineIn7d?.price?.filterIndexed { index, _ ->
+                    index % 5 == 0
+                },
             )
         )
     }

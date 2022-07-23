@@ -26,9 +26,7 @@ class RoomDataMapper @Inject constructor(
                 price = marketData.price,
                 marketCap = marketData.marketCap,
                 priceChangePercentage = marketData.priceChangePercentage,
-                sparklineData = marketData.sparklineData?.filterIndexed { index, _ ->
-                    index % 5 == 0
-                }?.serializeToJsonString(serializationManager),
+                sparklineData = marketData.sparklineData?.serializeToJsonString(serializationManager),
             )
         }
     }
